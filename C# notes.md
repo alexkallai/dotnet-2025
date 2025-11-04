@@ -946,31 +946,568 @@ Control flow keywords in C# are used to dictate the execution path of a program.
 ### **Summary Table**
 
 | **Keyword**   | **Purpose**                                                                 |
-
 |---------------|-----------------------------------------------------------------------------|
-
 | `if`, `else`  | Conditional execution based on a boolean expression.                       |
-
 | `switch`, `case` | Multi-way branching based on a single expression.                       |
-
 | `for`, `foreach`, `while`, `do` | Looping constructs for repeated execution.               |
-
 | `break`       | Exits the nearest enclosing loop or `switch`.                              |
-
 | `continue`    | Skips the current iteration of a loop.                                     |
-
 | `return`      | Exits a method and optionally returns a value.                             |
-
 | `goto`        | Transfers control to a labelled statement.                                 |
-
 | `throw`       | Throws an exception.                                                      |
-
 | `yield`       | Returns elements one at a time in an iterator method.                      |
-
 | `try`, `catch`, `finally` | Handles exceptions and ensures cleanup code is executed.       |
-
 | `lock`        | Ensures thread-safe execution of a code block.                             |
 
-Let me know if you need further clarification or additional examples!
+<br><br>
+
+## **5. Object-Oriented Programming** in detail
+
+Object-Oriented Programming (OOP) in C# revolves around defining classes, objects, and their behaviour. Below are examples and edge cases for the key OOP keywords:
+
+---
+
+### **Class and Object Keywords**
+
+#### **`class`**
+
+- **Description**: Defines a blueprint for creating objects.
+
+- **Example**:
+
+  ```csharp
+
+  public class Person
+
+   
+
+      public string Name;
+
+      public int Age;
+
+      public void DisplayInfo()
+
+       
+
+          Console.WriteLine($"Name:  Name , Age:  Age ");
+
+       
+
+   
+
+  var person = new Person();
+
+  person.Name = "John";
+
+  person.Age = 30;
+
+  person.DisplayInfo(); // Outputs: Name: John, Age: 30
+
+  ```
+
+- **Edge Case**: Avoid creating overly large classes; use smaller, focused classes to maintain readability and reusability [[1]](690a06ed4ccfa2a2002c2ec9).
+
+#### **`struct`**
+
+- **Description**: Defines a value type that is typically used for small, lightweight objects.
+
+- **Example**:
+
+  ```csharp
+
+  public struct Point
+
+   
+
+      public int X;
+
+      public int Y;
+
+      public Point(int x, int y)
+
+       
+
+          X = x;
+
+          Y = y;
+
+       
+
+   
+
+  var point = new Point(10, 20);
+
+  Console.WriteLine($"Point: ( point.X ,  point.Y )"); // Outputs: Point: (10, 20)
+
+  ```
+
+- **Edge Case**: Structs do not support inheritance and are passed by value, which can lead to performance issues if used for large data [[3]](690a06ed4ccfa2a2002c2ee0).
+
+#### **`interface`**
+
+- **Description**: Defines a contract that implementing classes or structs must follow.
+
+- **Example**:
+
+  ```csharp
+
+  public interface IShape
+
+   
+
+      void Draw();
+
+   
+
+  public class Circle : IShape
+
+   
+
+      public void Draw()
+
+       
+
+          Console.WriteLine("Drawing a Circle");
+
+       
+
+   
+
+  IShape shape = new Circle();
+
+  shape.Draw(); // Outputs: Drawing a Circle
+
+  ```
+
+- **Edge Case**: Interfaces cannot contain implementation (except default implementations in C# 8.0+) [[2]](690a06ed4ccfa2a2002c2ecf).
+
+#### **`enum`**
+
+- **Description**: Defines a set of named constants.
+
+- **Example**:
+
+  ```csharp
+
+  public enum DaysOfWeek
+
+   
+
+      Sunday,
+
+      Monday,
+
+      Tuesday,
+
+      Wednesday,
+
+      Thursday,
+
+      Friday,
+
+      Saturday
+
+   
+
+  var today = DaysOfWeek.Monday;
+
+  Console.WriteLine($"Today is:  today "); // Outputs: Today is: Monday
+
+  ```
+
+- **Edge Case**: Avoid assigning overlapping values to enum members unless intentional.
+
+#### **`delegate`**
+
+- **Description**: Represents a reference to a method.
+
+- **Example**:
+
+  ```csharp
+
+  public delegate void PrintMessage(string message);
+
+  public class Messenger
+
+   
+
+      public void Print(string message)
+
+       
+
+          Console.WriteLine(message);
+
+       
+
+   
+
+  var messenger = new Messenger();
+
+  PrintMessage print = messenger.Print;
+
+  print("Hello, World!"); // Outputs: Hello, World!
+
+  ```
+
+- **Edge Case**: Be cautious of null delegates; always check before invoking.
+
+---
+
+### **Inheritance and Polymorphism**
+
+#### **`abstract`**
+
+- **Description**: Defines a class or method that must be implemented in derived classes.
+
+- **Example**:
+
+  ```csharp
+
+  public abstract class Animal
+
+   
+
+      public abstract void Speak();
+
+   
+
+  public class Dog : Animal
+
+   
+
+      public override void Speak()
+
+       
+
+          Console.WriteLine("Woof!");
+
+       
+
+   
+
+  Animal animal = new Dog();
+
+  animal.Speak(); // Outputs: Woof!
+
+  ```
+
+- **Edge Case**: Abstract classes cannot be instantiated directly [[4]](690a06ed4ccfa2a2002c2ee5).
+
+#### **`virtual` and `override`**
+
+- **Description**: `virtual` allows a method to be overridden in a derived class; `override` provides the new implementation.
+
+- **Example**:
+
+  ```csharp
+
+  public class BaseClass
+
+   
+
+      public virtual void Greet()
+
+       
+
+          Console.WriteLine("Hello from BaseClass");
+
+       
+
+   
+
+  public class DerivedClass : BaseClass
+
+   
+
+      public override void Greet()
+
+       
+
+          Console.WriteLine("Hello from DerivedClass");
+
+       
+
+   
+
+  BaseClass obj = new DerivedClass();
+
+  obj.Greet(); // Outputs: Hello from DerivedClass
+
+  ```
+
+- **Edge Case**: Forgetting `override` in the derived class will not override the base method [[5]](690a06ed4ccfa2a2002c2ee6).
+
+#### **`sealed`**
+
+- **Description**: Prevents further inheritance of a class or method.
+
+- **Example**:
+
+  ```csharp
+
+  public sealed class FinalClass
+
+   
+
+      public void Display()
+
+       
+
+          Console.WriteLine("This class cannot be inherited");
+
+       
+
+   
+
+  // class DerivedClass : FinalClass // Error: Cannot derive from sealed class
+
+  ```
+
+- **Edge Case**: Overuse of `sealed` can limit extensibility.
+
+#### **`base`**
+
+- **Description**: Refers to the base class of the current class.
+
+- **Example**:
+
+  ```csharp
+
+  public class Parent
+
+   
+
+      public virtual void Show()
+
+       
+
+          Console.WriteLine("Parent class");
+
+       
+
+   
+
+  public class Child : Parent
+
+   
+
+      public override void Show()
+
+       
+
+          base.Show(); // Calls the base class method
+
+          Console.WriteLine("Child class");
+
+       
+
+   
+
+  var child = new Child();
+
+  child.Show();
+
+  // Outputs:
+
+  // Parent class
+
+  // Child class
+
+  ```
+
+- **Edge Case**: Ensure `base` is used only when necessary to avoid redundant calls.
+
+#### **`this`**
+
+- **Description**: Refers to the current instance of the class.
+
+- **Example**:
+
+  ```csharp
+
+  public class Person
+
+   
+
+      private string name;
+
+      public Person(string name)
+
+       
+
+          this.name = name;
+
+       
+
+      public void Display()
+
+       
+
+          Console.WriteLine($"Name:  this.name ");
+
+       
+
+   
+
+  var person = new Person("Alice");
+
+  person.Display(); // Outputs: Name: Alice
+
+  ```
+
+- **Edge Case**: Avoid overusing `this` when it is not required.
+
+---
+
+### **Access and Reference**
+
+#### **`new`**
+
+- **Description**: Creates a new instance of a class or hides a member in a derived class.
+
+- **Example**:
+
+  ```csharp
+
+  public class BaseClass
+
+   
+
+      public void Display()
+
+       
+
+          Console.WriteLine("Base class method");
+
+       
+
+   
+
+  public class DerivedClass : BaseClass
+
+   
+
+      public new void Display()
+
+       
+
+          Console.WriteLine("Derived class method");
+
+       
+
+   
+
+  BaseClass obj = new DerivedClass();
+
+  obj.Display(); // Outputs: Base class method
+
+  ```
+
+- **Edge Case**: Using `new` to hide a member can lead to confusion; prefer `override` when possible.
+
+#### **`readonly`**
+
+- **Description**: Declares a field that can only be assigned during declaration or in the constructor.
+
+- **Example**:
+
+  ```csharp
+
+  public class Example
+
+   
+
+      public readonly int Value;
+
+      public Example(int value)
+
+       
+
+          Value = value;
+
+       
+
+   
+
+  var example = new Example(10);
+
+  // example.Value = 20; // Error: Cannot modify readonly field
+
+  ```
+
+- **Edge Case**: `readonly` fields can still be modified via reflection, so use cautiously.
+
+#### **`const`**
+
+- **Description**: Declares a compile-time constant.
+
+- **Example**:
+
+  ```csharp
+
+  public class Constants
+
+   
+
+      public const double Pi = 3.14159;
+
+   
+
+  Console.WriteLine($"Pi:  Constants.Pi "); // Outputs: Pi: 3.14159
+
+  ```
+
+- **Edge Case**: `const` values are replaced at compile time, so changing their value requires recompilation of dependent assemblies.
+
+#### **`static`**
+
+- **Description**: Declares a member that belongs to the type itself rather than an instance.
+
+- **Example**:
+
+  ```csharp
+
+  public class MathUtils
+
+   
+
+      public static int Add(int a, int b)
+
+       
+
+          return a + b;
+
+       
+
+   
+
+  Console.WriteLine(MathUtils.Add(3, 4)); // Outputs: 7
+
+  ```
+
+- **Edge Case**: Static members cannot access instance members directly.
+
+---
+
+### **Summary Table**
+
+| **Keyword**       | **Purpose**                                                                 |
+|-------------------|-----------------------------------------------------------------------------|
+| `class`           | Defines a blueprint for objects.                                           |
+| `struct`          | Defines a value type for lightweight objects.                              |
+| `interface`       | Defines a contract for classes or structs.                                 |
+| `enum`            | Defines a set of named constants.                                          |
+| `delegate`        | Represents a reference to a method.                                        |
+| `abstract`        | Defines a class or method to be implemented in derived classes.            |
+| `virtual`         | Allows a method to be overridden in derived classes.                       |
+| `override`        | Provides a new implementation for a virtual method.                       |
+| `sealed`          | Prevents further inheritance of a class or method.                        |
+| `base`            | Refers to the base class of the current class.                             |
+| `this`            | Refers to the current instance of the class.                               |
+| `new`             | Creates a new instance or hides a member in a derived class.               |
+| `readonly`        | Declares a field that can only be assigned during declaration or in a constructor. |
+| `const`           | Declares a compile-time constant.                                          |
+| `static`          | Declares a member that belongs to the type itself.                         |
+
 
 ```

@@ -1106,5 +1106,130 @@ Object-Oriented Programming (OOP) in C# revolves around defining classes, object
 | `const`           | Declares a compile-time constant.                                          |
 | `static`          | Declares a member that belongs to the type itself.                         |
 
+<br>
+<br>
+
+## **6. Namespace and Assembly** in detail
+
+In C#, namespaces and assemblies are used to organise code and manage scope. Below are examples and edge cases for the relevant keywords:
+
+---
+
+### **`namespace`**
+
+- **Description**: Used to organise code into logical groups and prevent name conflicts.
+
+- **Example**:
+
+  ```csharp
+  namespace MyApplication.Utilities
+   
+      public class MathHelper
+       
+          public static int Add(int a, int b)
+           
+              return a + b;
+           
+       
+   
+  namespace MyApplication.Main
+   
+      using MyApplication.Utilities;
+      public class Program
+       
+          public static void Main()
+           
+              int result = MathHelper.Add(5, 10);
+              Console.WriteLine($"Result:  result "); // Outputs: Result: 15
+           
+       
+  ```
+
+- **Edge Case**: Avoid deeply nested namespaces as they can make code harder to read and maintain.
+
+---
+
+### **`using`**
+
+- **Description**: Imports a namespace or provides a scope for resource management.
+
+- **Example 1**: **Importing a Namespace**
+
+  ```csharp
+  using System;
+  public class Program
+   
+      public static void Main()
+       
+          Console.WriteLine("Hello, World!");
+       
+  ```
+
+- **Example 2**: **Resource Management**
+
+  ```csharp
+  using (var file = new System.IO.StreamWriter("example.txt"))
+   
+      file.WriteLine("This is a test.");
+   
+  // The file is automatically closed when exiting the `using` block.
+  ```
+
+- **Edge Case**: Forgetting to use `using` for resource management can lead to resource leaks, such as open file handles.
+
+---
+
+### **`extern`**
+
+- **Description**: Declares a method or alias that is implemented externally, often used for interoperability with unmanaged code or external assemblies.
+
+- **Example**:
+
+  ```csharp
+  using System.Runtime.InteropServices;
+  class Program
+   
+      [DllImport("user32.dll")]
+      public static extern int MessageBox(IntPtr hWnd, string text, string caption, uint type);
+      public static void Main()
+       
+          MessageBox(IntPtr.Zero, "Hello, World!", "Message", 0);
+       
+  ```
+
+- **Edge Case**: Ensure the external method exists and is compatible with the platform; otherwise, runtime errors will occur.
+
+---
+
+### **`assembly`**
+
+- **Description**: Refers to a compiled code library (DLL or EXE) that contains metadata and code. It is the fundamental unit of deployment in .NET.
+
+- **Example**: **Assembly Attribute**
+
+  ```csharp
+  using System.Reflection;
+  [assembly: AssemblyTitle("My Application")]
+  [assembly: AssemblyVersion("1.0.0.0")]
+  public class Program
+   
+      public static void Main()
+       
+          Console.WriteLine("Assembly attributes set.");
+       
+  ```
+
+- **Edge Case**: Incorrect assembly attributes (e.g., versioning) can cause issues with deployment and compatibility.
+
+---
+
+### **Summary Table**
+
+| **Keyword**   | **Purpose**                                                                 |
+|---------------|-----------------------------------------------------------------------------|
+| `namespace`   | Organises code into logical groups and prevents name conflicts.             |
+| `using`       | Imports namespaces or manages resources within a defined scope.            |
+| `extern`      | Declares external methods or aliases for interoperability.                 |
+| `assembly`    | Refers to a compiled code library and allows setting assembly attributes.   |
 
 ```

@@ -1,16 +1,6 @@
 ﻿using Microsoft.Win32;
-using ScottPlot;
-using System.IO;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Data_Analyzer
 {
@@ -33,13 +23,13 @@ namespace Data_Analyzer
             if (openFileDialog.ShowDialog() == true)
             {
                 string filePath = openFileDialog.FileName;
-                Console.WriteLine(filePath+"opened");
+                Console.WriteLine(filePath + "opened");
                 openedFile = new OpenedFile(filePath);
                 startProcessPipeline();
-                
+
 
             }
-                
+
         }
 
 
@@ -49,10 +39,12 @@ namespace Data_Analyzer
             Console.WriteLine(FirstRangeSlider.HigherValue);
             double firstRangeMin = FirstRangeSlider.Minimum;
             double firstRangeMax = FirstRangeSlider.Maximum;
-            int byteRangeStart = Convert.ToInt32(OpenedFile.fileBytesLength * (FirstRangeSlider.LowerValue / FirstRangeSlider.Maximum));
-            int byteRangeEnd = Convert.ToInt32(OpenedFile.fileBytesLength * (FirstRangeSlider.HigherValue / FirstRangeSlider.Maximum));
+            int firstByteRangeStart = Convert.ToInt32(OpenedFile.fileBytesLength * (FirstRangeSlider.LowerValue / FirstRangeSlider.Maximum));
+            int firstByteRangeEnd = Convert.ToInt32(OpenedFile.fileBytesLength * (FirstRangeSlider.HigherValue / FirstRangeSlider.Maximum));
+            int secondByteRangeStart = Convert.ToInt32(OpenedFile.fileBytesLength * (SecondRangeSlider.LowerValue / SecondRangeSlider.Maximum));
+            int secondByteRangeEnd = Convert.ToInt32(OpenedFile.fileBytesLength * (SecondRangeSlider.HigherValue / SecondRangeSlider.Maximum));
 
-            ScottPlot.Plottables.Heatmap leftheatmap = PlotLeft1.Plot.Add.Heatmap(OpenedFile.GetWrappedByteData(OpenedFile.GetRange(byteRangeStart, byteRangeEnd),PlotLeft1.Height, PlotLeft1.Width));
+            ScottPlot.Plottables.Heatmap leftheatmap = PlotLeft1.Plot.Add.Heatmap(OpenedFile.GetWrappedByteData(OpenedFile.GetRange(firstByteRangeStart, firstByteRangeEnd), PlotLeft1.Height, PlotLeft1.Width));
             PlotLeft1.Plot.Axes.AutoScale();
             PlotLeft1.Refresh();
 

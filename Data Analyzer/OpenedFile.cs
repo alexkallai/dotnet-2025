@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 
 namespace Data_Analyzer
 {
@@ -31,16 +26,16 @@ namespace Data_Analyzer
             {
                 int first = Convert.ToInt32(fileBytes[i]);
                 int second = Convert.ToInt32(fileBytes[i + 1]);
-                workDigraph[first,second] += 1;
-                
+                workDigraph[first, second] += 1;
+
             }
             return workDigraph;
-            
+
         }
 
         public static byte[] GetFirstRange(int start, int end)
         {
-                return fileBytes[start..end];
+            return fileBytes[start..end];
         }
 
         public static ReadOnlyMemory<byte> GetRange(int start, int end)

@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using Microsoft.Win32;
+using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -19,13 +21,19 @@ namespace Data_Analyzer
         public MainWindow()
         {
             InitializeComponent();
-            Loaded += (s, e) =>
+
+        }
+        private void btnOpenFile_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            if (openFileDialog.ShowDialog() == true)
             {
-                double[] dataX = { 1, 2, 3, 4, 5 };
-                double[] dataY = { 1, 4, 9, 16, 25 };
-                WpfPlot1.Plot.Add.Scatter(dataX, dataY);
-                WpfPlot1.Refresh();
-            };
+                string filePath = openFileDialog.FileName;
+                Console.WriteLine(filePath+"opened");
+                OpenedFile openedFile = new OpenedFile(filePath);
+                Console.WriteLine("asdf");
+            }
+                
         }
     }
 }

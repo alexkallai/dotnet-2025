@@ -14,7 +14,7 @@
         <!-- Menu Bar (Top) -->
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
-                <MenuItem Header="_Open..." />
+                <MenuItem Click="btnOpenFile_Click" Header="_Open..." />
                 <MenuItem Header="_Save" />
                 <Separator/>
                 <MenuItem Header="E_xit" />

@@ -139,13 +139,9 @@ Reference types store references to their data, which is allocated on the heap. 
   - Example:
 
     ```csharp
-
     int num = 10;
-
     object obj = num; // Boxing
-
     int unboxedNum = (int)obj; // Unboxing
-
     ```
 
 - **Type Conversion**:
@@ -155,11 +151,8 @@ Reference types store references to their data, which is allocated on the heap. 
   - Example:
 
     ```csharp
-
     double d = 10; // Implicit conversion
-
     int i = (int)d; // Explicit conversion
-
     ```
 
 ---
@@ -885,33 +878,19 @@ Object-Oriented Programming (OOP) in C# revolves around defining classes, object
 - **Example**:
 
   ```csharp
-
   public abstract class Animal
-
    
-
       public abstract void Speak();
-
    
-
   public class Dog : Animal
-
    
-
       public override void Speak()
-
        
-
           Console.WriteLine("Woof!");
-
        
-
    
-
   Animal animal = new Dog();
-
   animal.Speak(); // Outputs: Woof!
-
   ```
 
 - **Edge Case**: Abstract classes cannot be instantiated directly [[4]](690a06ed4ccfa2a2002c2ee5).
@@ -923,39 +902,22 @@ Object-Oriented Programming (OOP) in C# revolves around defining classes, object
 - **Example**:
 
   ```csharp
-
   public class BaseClass
-
    
-
       public virtual void Greet()
-
        
-
           Console.WriteLine("Hello from BaseClass");
-
        
-
    
-
   public class DerivedClass : BaseClass
-
    
-
       public override void Greet()
-
        
-
           Console.WriteLine("Hello from DerivedClass");
-
        
-
    
-
   BaseClass obj = new DerivedClass();
-
   obj.Greet(); // Outputs: Hello from DerivedClass
-
   ```
 
 - **Edge Case**: Forgetting `override` in the derived class will not override the base method [[5]](690a06ed4ccfa2a2002c2ee6).
@@ -967,23 +929,14 @@ Object-Oriented Programming (OOP) in C# revolves around defining classes, object
 - **Example**:
 
   ```csharp
-
   public sealed class FinalClass
-
    
-
       public void Display()
-
        
-
           Console.WriteLine("This class cannot be inherited");
-
        
-
    
-
   // class DerivedClass : FinalClass // Error: Cannot derive from sealed class
-
   ```
 
 - **Edge Case**: Overuse of `sealed` can limit extensibility.
@@ -995,47 +948,26 @@ Object-Oriented Programming (OOP) in C# revolves around defining classes, object
 - **Example**:
 
   ```csharp
-
   public class Parent
-
    
-
       public virtual void Show()
-
        
-
           Console.WriteLine("Parent class");
-
        
-
    
-
   public class Child : Parent
-
    
-
       public override void Show()
-
        
-
           base.Show(); // Calls the base class method
-
           Console.WriteLine("Child class");
-
        
-
    
-
   var child = new Child();
-
   child.Show();
-
   // Outputs:
-
   // Parent class
-
   // Child class
-
   ```
 
 - **Edge Case**: Ensure `base` is used only when necessary to avoid redundant calls.
@@ -1047,35 +979,20 @@ Object-Oriented Programming (OOP) in C# revolves around defining classes, object
 - **Example**:
 
   ```csharp
-
   public class Person
-
    
-
       private string name;
-
       public Person(string name)
-
        
-
           this.name = name;
-
        
-
       public void Display()
-
        
-
           Console.WriteLine($"Name:  this.name ");
-
        
-
    
-
   var person = new Person("Alice");
-
   person.Display(); // Outputs: Name: Alice
-
   ```
 
 - **Edge Case**: Avoid overusing `this` when it is not required.
@@ -1091,39 +1008,22 @@ Object-Oriented Programming (OOP) in C# revolves around defining classes, object
 - **Example**:
 
   ```csharp
-
   public class BaseClass
-
    
-
       public void Display()
-
        
-
           Console.WriteLine("Base class method");
-
        
-
    
-
   public class DerivedClass : BaseClass
-
    
-
       public new void Display()
-
        
-
           Console.WriteLine("Derived class method");
-
        
-
    
-
   BaseClass obj = new DerivedClass();
-
   obj.Display(); // Outputs: Base class method
-
   ```
 
 - **Edge Case**: Using `new` to hide a member can lead to confusion; prefer `override` when possible.
@@ -1135,27 +1035,16 @@ Object-Oriented Programming (OOP) in C# revolves around defining classes, object
 - **Example**:
 
   ```csharp
-
   public class Example
-
    
-
       public readonly int Value;
-
       public Example(int value)
-
        
-
           Value = value;
-
        
-
    
-
   var example = new Example(10);
-
   // example.Value = 20; // Error: Cannot modify readonly field
-
   ```
 
 - **Edge Case**: `readonly` fields can still be modified via reflection, so use cautiously.
@@ -1167,17 +1056,11 @@ Object-Oriented Programming (OOP) in C# revolves around defining classes, object
 - **Example**:
 
   ```csharp
-
   public class Constants
-
    
-
       public const double Pi = 3.14159;
-
    
-
   Console.WriteLine($"Pi:  Constants.Pi "); // Outputs: Pi: 3.14159
-
   ```
 
 - **Edge Case**: `const` values are replaced at compile time, so changing their value requires recompilation of dependent assemblies.
@@ -1189,23 +1072,14 @@ Object-Oriented Programming (OOP) in C# revolves around defining classes, object
 - **Example**:
 
   ```csharp
-
   public class MathUtils
-
    
-
       public static int Add(int a, int b)
-
        
-
           return a + b;
-
        
-
    
-
   Console.WriteLine(MathUtils.Add(3, 4)); // Outputs: 7
-
   ```
 
 - **Edge Case**: Static members cannot access instance members directly.

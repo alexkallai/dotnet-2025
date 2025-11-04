@@ -172,3 +172,338 @@ Reference types store references to their data, which is allocated on the heap. 
 | **Reference Types** | `string`, `object`     | Store references to data, derived from `Object`. |
 | **Special Types**   | `void`, `dynamic`      | Special-purpose types for specific scenarios. |
 
+
+
+# Summary of C# Keywords
+
+C# has a set of reserved keywords that are predefined and have special meanings to the compiler. These keywords are used to define the syntax and structure of C# programs. Below is a categorised summary of C# keywords:
+
+---
+
+## **1. Access Modifiers**
+Used to define the accessibility of types and members.
+- `public` - Accessible from any code.
+- `private` - Accessible only within the containing type.
+- `protected` - Accessible within the containing type and derived types.
+- `internal` - Accessible within the same assembly.
+- `protected internal` - Accessible within the same assembly or derived types.
+
+---
+
+## **2. Data Types**
+Used to define variables and their types.
+- **Value Types**:
+  - `bool`, `byte`, `sbyte`, `char`, `decimal`, `double`, `float`, `int`, `uint`, `long`, `ulong`, `short`, `ushort`
+- **Reference Types**:
+  - `object`, `string`, `dynamic`
+
+---
+
+## **3. Control Flow**
+Used to control the flow of execution in a program.
+- **Conditionals**:
+  - `if`, `else`, `switch`, `case`
+- **Loops**:
+  - `for`, `foreach`, `while`, `do`, `break`, `continue`
+- **Jump Statements**:
+  - `return`, `goto`, `throw`, `yield`
+
+---
+
+## **4. Exception Handling**
+Used to handle runtime errors.
+- `try`, `catch`, `finally`, `throw`
+
+---
+
+## **5. Object-Oriented Programming**
+Used to define classes, objects, and their behaviour.
+- **Class and Object Keywords**:
+  - `class`, `struct`, `interface`, `enum`, `delegate`
+- **Inheritance and Polymorphism**:
+  - `abstract`, `virtual`, `override`, `sealed`, `base`, `this`
+- **Access and Reference**:
+  - `new`, `readonly`, `const`, `static`
+
+---
+
+## **6. Namespace and Assembly**
+Used to organise code and manage scope.
+- `namespace`, `using`, `extern`, `assembly`
+
+---
+
+## **7. Modifiers**
+Used to modify declarations.
+- `const`, `readonly`, `static`, `volatile`, `async`, `await`
+
+---
+
+## **8. LINQ and Query Keywords**
+Used for querying data.
+- `from`, `where`, `select`, `group`, `orderby`, `join`, `into`, `let`
+
+---
+
+## **9. Miscellaneous Keywords**
+- `is` - Checks object compatibility with a type.
+- `as` - Performs safe type conversion.
+- `typeof` - Gets the `Type` object for a type.
+- `sizeof` - Gets the size of a value type.
+- `checked` / `unchecked` - Controls overflow checking for arithmetic operations.
+- `lock` - Ensures thread safety.
+- `using` - Manages resources or imports namespaces.
+- `fixed` - Pins a variable in memory.
+- `unsafe` - Allows unsafe code blocks.
+
+---
+
+## **10. Contextual Keywords**
+These have special meaning in specific contexts but are not reserved.
+- `add`, `remove`, `get`, `set`, `partial`, `yield`, `where`, `dynamic`, `global`
+
+---
+
+## **11. Unused or Rarely Used Keywords**
+These are less commonly used but have specific purposes.
+- `__arglist`, `__makeref`, `__reftype`, `__refvalue`
+
+---
+
+## **Notes**
+- Keywords cannot be used as identifiers unless prefixed with `@`.
+- Example:
+  ```csharp
+  int @class = 10; // Valid, but not recommended
+
+
+
+## **1. Access Modifiers**
+
+Access modifiers in C# define the visibility and accessibility of classes, methods, and other members. Below are examples and edge cases for each access modifier:
+
+---
+
+### **`public`**
+
+- **Description**: Members declared as `public` are accessible from any code in the same assembly or another assembly that references it.
+
+- **Example**:
+
+  ```csharp
+
+  public class PublicExample
+
+  {
+
+      public string Name = "HEITEC";
+
+      public void Display()
+
+      {
+
+          Console.WriteLine($"Name: {Name}");
+
+      }
+
+  }
+
+  // Accessible from anywhere
+
+  var example = new PublicExample();
+
+  example.Display(); // Works fine
+
+  ```
+
+- **Edge Case**: Be cautious when exposing sensitive data or methods as `public`, as they can be accessed and modified from anywhere.
+
+---
+
+### **`private`**
+
+- **Description**: Members declared as `private` are accessible only within the containing class.
+
+- **Example**:
+
+  ```csharp
+
+  public class PrivateExample
+
+  {
+
+      private string Secret = "Top Secret";
+
+      public void ShowSecret()
+
+      {
+
+          Console.WriteLine($"Secret: {Secret}"); // Accessible within the class
+
+      }
+
+  }
+
+  var example = new PrivateExample();
+
+  // example.Secret = "New Secret"; // Error: Cannot access private member
+
+  example.ShowSecret(); // Works fine
+
+  ```
+
+- **Edge Case**: Overuse of `private` can make testing and extending functionality difficult.
+
+---
+
+### **`protected`**
+
+- **Description**: Members declared as `protected` are accessible within the containing class and any derived classes.
+
+- **Example**:
+
+  ```csharp
+
+  public class BaseClass
+
+  {
+
+      protected string ProtectedData = "Protected Data";
+
+      protected void ShowData()
+
+      {
+
+          Console.WriteLine($"Data: {ProtectedData}");
+
+      }
+
+  }
+
+  public class DerivedClass : BaseClass
+
+  {
+
+      public void AccessProtectedData()
+
+      {
+
+          Console.WriteLine(ProtectedData); // Accessible in derived class
+
+          ShowData(); // Accessible in derived class
+
+      }
+
+  }
+
+  var derived = new DerivedClass();
+
+  derived.AccessProtectedData(); // Works fine
+
+  // derived.ProtectedData; // Error: Not accessible outside the class hierarchy
+
+  ```
+
+- **Edge Case**: `protected` members are not accessible outside the class hierarchy, even if the derived class is instantiated.
+
+---
+
+### **`internal`**
+
+- **Description**: Members declared as `internal` are accessible only within the same assembly.
+
+- **Example**:
+
+  ```csharp
+
+  internal class InternalExample
+
+  {
+
+      internal string InternalData = "Internal Data";
+
+      internal void ShowData()
+
+      {
+
+          Console.WriteLine($"Data: {InternalData}");
+
+      }
+
+  }
+
+  // Accessible within the same assembly
+
+  var example = new InternalExample();
+
+  example.ShowData(); // Works fine
+
+  ```
+
+- **Edge Case**: If the assembly is shared, all code within that assembly can access `internal` members, which might expose sensitive data unintentionally.
+
+---
+
+### **`protected internal`**
+
+- **Description**: Members declared as `protected internal` are accessible within the same assembly or from derived classes in other assemblies.
+
+- **Example**:
+
+  ```csharp
+
+  public class ProtectedInternalExample
+
+  {
+
+      protected internal string Data = "Protected Internal Data";
+
+      protected internal void ShowData()
+
+      {
+
+          Console.WriteLine($"Data: {Data}");
+
+      }
+
+  }
+
+  public class DerivedClass : ProtectedInternalExample
+
+  {
+
+      public void AccessData()
+
+      {
+
+          Console.WriteLine(Data); // Accessible in derived class
+
+          ShowData(); // Accessible in derived class
+
+      }
+
+  }
+
+  // Within the same assembly
+
+  var example = new ProtectedInternalExample();
+
+  example.ShowData(); // Works fine
+
+  ```
+
+- **Edge Case**: If the derived class is in another assembly, the `protected internal` member is accessible only through inheritance, not directly.
+
+---
+
+### **Summary Table**
+
+| **Modifier**         | **Same Class** | **Derived Class (Same Assembly)** | **Other Classes (Same Assembly)** | **Derived Class (Other Assembly)** | **Other Classes (Other Assembly)** |
+|-----------------------|----------------|------------------------------------|------------------------------------|-------------------------------------|-------------------------------------|
+| `public`             | ✅             | ✅                                 | ✅                                 | ✅                                  | ✅                                  |
+| `private`            | ✅             | ❌                                 | ❌                                 | ❌                                  | ❌                                  |
+| `protected`          | ✅             | ✅                                 | ❌                                 | ✅                                  | ❌                                  |
+| `internal`           | ✅             | ✅                                 | ✅                                 | ❌                                  | ❌                                  |
+| `protected internal` | ✅             | ✅                                 | ✅                                 | ✅                                  | ❌                                  |
+
+--- 

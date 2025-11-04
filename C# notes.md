@@ -172,7 +172,7 @@ Reference types store references to their data, which is allocated on the heap. 
 | **Reference Types** | `string`, `object`     | Store references to data, derived from `Object`. |
 | **Special Types**   | `void`, `dynamic`      | Special-purpose types for specific scenarios. |
 
-
+<br><br>
 
 # Summary of C# Keywords
 
@@ -275,7 +275,7 @@ These are less commonly used but have specific purposes.
 - Example:
   ```csharp
   int @class = 10; // Valid, but not recommended
-
+  ```
 
 <br><br>
 
@@ -292,29 +292,17 @@ Access modifiers in C# define the visibility and accessibility of classes, metho
 - **Example**:
 
   ```csharp
-
   public class PublicExample
-
   {
-
       public string Name = "HEITEC";
-
       public void Display()
-
       {
-
           Console.WriteLine($"Name: {Name}");
-
       }
-
   }
-
   // Accessible from anywhere
-
   var example = new PublicExample();
-
   example.Display(); // Works fine
-
   ```
 
 - **Edge Case**: Be cautious when exposing sensitive data or methods as `public`, as they can be accessed and modified from anywhere.
@@ -328,29 +316,17 @@ Access modifiers in C# define the visibility and accessibility of classes, metho
 - **Example**:
 
   ```csharp
-
   public class PrivateExample
-
   {
-
       private string Secret = "Top Secret";
-
       public void ShowSecret()
-
       {
-
           Console.WriteLine($"Secret: {Secret}"); // Accessible within the class
-
       }
-
   }
-
   var example = new PrivateExample();
-
   // example.Secret = "New Secret"; // Error: Cannot access private member
-
   example.ShowSecret(); // Works fine
-
   ```
 
 - **Edge Case**: Overuse of `private` can make testing and extending functionality difficult.
@@ -364,45 +340,25 @@ Access modifiers in C# define the visibility and accessibility of classes, metho
 - **Example**:
 
   ```csharp
-
   public class BaseClass
-
   {
-
       protected string ProtectedData = "Protected Data";
-
       protected void ShowData()
-
       {
-
           Console.WriteLine($"Data: {ProtectedData}");
-
       }
-
   }
-
   public class DerivedClass : BaseClass
-
   {
-
       public void AccessProtectedData()
-
       {
-
           Console.WriteLine(ProtectedData); // Accessible in derived class
-
           ShowData(); // Accessible in derived class
-
       }
-
   }
-
   var derived = new DerivedClass();
-
   derived.AccessProtectedData(); // Works fine
-
   // derived.ProtectedData; // Error: Not accessible outside the class hierarchy
-
   ```
 
 - **Edge Case**: `protected` members are not accessible outside the class hierarchy, even if the derived class is instantiated.
@@ -416,29 +372,17 @@ Access modifiers in C# define the visibility and accessibility of classes, metho
 - **Example**:
 
   ```csharp
-
   internal class InternalExample
-
   {
-
       internal string InternalData = "Internal Data";
-
       internal void ShowData()
-
       {
-
           Console.WriteLine($"Data: {InternalData}");
-
       }
-
   }
-
   // Accessible within the same assembly
-
   var example = new InternalExample();
-
   example.ShowData(); // Works fine
-
   ```
 
 - **Edge Case**: If the assembly is shared, all code within that assembly can access `internal` members, which might expose sensitive data unintentionally.
@@ -452,45 +396,25 @@ Access modifiers in C# define the visibility and accessibility of classes, metho
 - **Example**:
 
   ```csharp
-
   public class ProtectedInternalExample
-
   {
-
       protected internal string Data = "Protected Internal Data";
-
       protected internal void ShowData()
-
       {
-
           Console.WriteLine($"Data: {Data}");
-
       }
-
   }
-
   public class DerivedClass : ProtectedInternalExample
-
   {
-
       public void AccessData()
-
       {
-
           Console.WriteLine(Data); // Accessible in derived class
-
           ShowData(); // Accessible in derived class
-
       }
-
   }
-
   // Within the same assembly
-
   var example = new ProtectedInternalExample();
-
   example.ShowData(); // Works fine
-
   ```
 
 - **Edge Case**: If the derived class is in another assembly, the `protected internal` member is accessible only through inheritance, not directly.
@@ -526,25 +450,15 @@ Control flow keywords in C# are used to dictate the execution path of a program.
 - **Example**:
 
   ```csharp
-
   int number = 10;
-
   if (number > 5)
-
   {
-
       Console.WriteLine("Number is greater than 5");
-
   }
-
   else
-
   {
-
       Console.WriteLine("Number is 5 or less");
-
   }
-
   ```
 
 - **Edge Case**: Ensure the condition is not ambiguous (e.g., avoid using floating-point comparisons due to precision issues) [[1]](690a05cb19377a2c24b73311).
@@ -556,39 +470,22 @@ Control flow keywords in C# are used to dictate the execution path of a program.
 - **Example**:
 
   ```csharp
-
   int day = 3;
-
   switch (day)
-
   {
-
       case 1:
-
           Console.WriteLine("Monday");
-
           break;
-
       case 2:
-
           Console.WriteLine("Tuesday");
-
           break;
-
       case 3:
-
           Console.WriteLine("Wednesday");
-
           break;
-
       default:
-
           Console.WriteLine("Invalid day");
-
           break;
-
   }
-
   ```
 
 - **Edge Case**: Forgetting the `break` statement can cause fall-through behaviour, which might lead to unintended execution [[2]](690a05cb19377a2c24b73312).
@@ -604,15 +501,10 @@ Control flow keywords in C# are used to dictate the execution path of a program.
 - **Example**:
 
   ```csharp
-
   for (int i = 0; i < 5; i++)
-
   {
-
       Console.WriteLine($"Iteration:  i ");
-
   }
-
   ```
 
 - **Edge Case**: Ensure the loop condition prevents infinite loops (e.g., incorrect increment/decrement logic) [[3]](690a05cb19377a2c24b73313).
@@ -624,17 +516,11 @@ Control flow keywords in C# are used to dictate the execution path of a program.
 - **Example**:
 
   ```csharp
-
   string[] fruits = { "Apple", "Banana", "Cherry" };
-
   foreach (string fruit in fruits)
-
   {
-
       Console.WriteLine(fruit);
-
   }
-
   ```
 
 - **Edge Case**: Modifying the collection during iteration can throw an exception [[4]](690a05cb19377a2c24b73314).
@@ -646,19 +532,12 @@ Control flow keywords in C# are used to dictate the execution path of a program.
 - **Example**:
 
   ```csharp
-
   int count = 0;
-
   while (count < 3)
-
   {
-
       Console.WriteLine($"Count:  count ");
-
       count++;
-
   }
-
   ```
 
 - **Edge Case**: Ensure the condition eventually becomes false to avoid infinite loops [[5]](690a05cb19377a2c24b73315).
@@ -670,19 +549,12 @@ Control flow keywords in C# are used to dictate the execution path of a program.
 - **Example**:
 
   ```csharp
-
   int count = 0;
-
   do
-
   {
-
       Console.WriteLine($"Count:  count ");
-
       count++;
-
   } while (count < 3);
-
   ```
 
 - **Edge Case**: The block always executes at least once, even if the condition is false initially [[6]](690a05cb19377a2c24b73316).
@@ -694,23 +566,14 @@ Control flow keywords in C# are used to dictate the execution path of a program.
 - **Example**:
 
   ```csharp
-
   for (int i = 0; i < 10; i++)
-
   {
-
       if (i == 5)
-
       {
-
           break;
-
       }
-
       Console.WriteLine(i);
-
   }
-
   ```
 
 - **Edge Case**: Use carefully to avoid prematurely exiting loops unintentionally [[7]](690a05cb19377a2c24b73317).
@@ -722,23 +585,14 @@ Control flow keywords in C# are used to dictate the execution path of a program.
 - **Example**:
 
   ```csharp
-
   for (int i = 0; i < 5; i++)
-
   {
-
       if (i == 2)
-
       {
-
           continue;
-
       }
-
       Console.WriteLine(i);
-
   }
-
   ```
 
 - **Edge Case**: Ensure the skipped iteration does not cause logical errors in subsequent iterations [[8]](690a05cb19377a2c24b73318).
@@ -754,17 +608,11 @@ Control flow keywords in C# are used to dictate the execution path of a program.
 - **Example**:
 
   ```csharp
-
   int Add(int a, int b)
-
   {
-
       return a + b;
-
   }
-
   Console.WriteLine(Add(3, 4)); // Outputs: 7
-
   ```
 
 - **Edge Case**: Ensure all code paths in a method return a value if the method has a return type [[9]](690a05cb19377a2c24b73319).
@@ -776,23 +624,14 @@ Control flow keywords in C# are used to dictate the execution path of a program.
 - **Example**:
 
   ```csharp
-
   int number = 5;
-
   if (number > 0)
-
   {
-
       goto Positive;
-
   }
-
   Console.WriteLine("This will not execute");
-
   Positive:
-
   Console.WriteLine("Number is positive");
-
   ```
 
 - **Edge Case**: Overuse of `goto` can make code difficult to read and maintain [[10]](690a05cb19377a2c24b7331a).
@@ -804,37 +643,21 @@ Control flow keywords in C# are used to dictate the execution path of a program.
 - **Example**:
 
   ```csharp
-
   void ValidateAge(int age)
-
   {
-
       if (age < 18)
-
       {
-
           throw new ArgumentException("Age must be 18 or older");
-
       }
-
   }
-
   try
-
   {
-
       ValidateAge(16);
-
   }
-
   catch (Exception ex)
-
   {
-
       Console.WriteLine(ex.Message);
-
   }
-
   ```
 
 - **Edge Case**: Avoid throwing exceptions for normal control flow; use them for exceptional cases only [[11]](690a05cb19377a2c24b7331b).
@@ -846,29 +669,17 @@ Control flow keywords in C# are used to dictate the execution path of a program.
 - **Example**:
 
   ```csharp
-
   IEnumerable<int> GetNumbers()
-
   {
-
       for (int i = 0; i < 5; i++)
-
       {
-
           yield return i;
-
       }
-
   }
-
   foreach (var number in GetNumbers())
-
   {
-
       Console.WriteLine(number);
-
   }
-
   ```
 
 - **Edge Case**: Using `yield` in non-iterator methods will result in a compile-time error [[12]](690a05cb19377a2c24b7331c).
@@ -884,31 +695,18 @@ Control flow keywords in C# are used to dictate the execution path of a program.
 - **Example**:
 
   ```csharp
-
   try
-
   {
-
       int result = 10 / 0;
-
   }
-
   catch (DivideByZeroException ex)
-
   {
-
       Console.WriteLine("Cannot divide by zero");
-
   }
-
   finally
-
   {
-
       Console.WriteLine("Cleanup code executed");
-
   }
-
   ```
 
 - **Edge Case**: Avoid catching general exceptions (e.g., `Exception`) unless necessary [[13]](690a05cb19377a2c24b7331d).
@@ -920,23 +718,14 @@ Control flow keywords in C# are used to dictate the execution path of a program.
 - **Example**:
 
   ```csharp
-
   private static readonly object _lock = new object();
-
   void CriticalSection()
-
   {
-
       lock (_lock)
-
       {
-
           Console.WriteLine("Thread-safe operation");
-
       }
-
   }
-
   ```
 
 - **Edge Case**: Deadlocks can occur if multiple threads lock resources in different orders [[14]](690a05cb19377a2c24b7331e).
@@ -976,33 +765,19 @@ Object-Oriented Programming (OOP) in C# revolves around defining classes, object
 - **Example**:
 
   ```csharp
-
   public class Person
-
    
-
       public string Name;
-
       public int Age;
-
       public void DisplayInfo()
-
        
-
           Console.WriteLine($"Name:  Name , Age:  Age ");
-
        
-
    
-
   var person = new Person();
-
   person.Name = "John";
-
   person.Age = 30;
-
   person.DisplayInfo(); // Outputs: Name: John, Age: 30
-
   ```
 
 - **Edge Case**: Avoid creating overly large classes; use smaller, focused classes to maintain readability and reusability [[1]](690a06ed4ccfa2a2002c2ec9).
@@ -1014,31 +789,18 @@ Object-Oriented Programming (OOP) in C# revolves around defining classes, object
 - **Example**:
 
   ```csharp
-
   public struct Point
-
    
-
       public int X;
-
       public int Y;
-
       public Point(int x, int y)
-
        
-
           X = x;
-
           Y = y;
-
        
-
    
-
   var point = new Point(10, 20);
-
   Console.WriteLine($"Point: ( point.X ,  point.Y )"); // Outputs: Point: (10, 20)
-
   ```
 
 - **Edge Case**: Structs do not support inheritance and are passed by value, which can lead to performance issues if used for large data [[3]](690a06ed4ccfa2a2002c2ee0).
@@ -1050,33 +812,19 @@ Object-Oriented Programming (OOP) in C# revolves around defining classes, object
 - **Example**:
 
   ```csharp
-
   public interface IShape
-
    
-
       void Draw();
-
    
-
   public class Circle : IShape
-
    
-
       public void Draw()
-
        
-
           Console.WriteLine("Drawing a Circle");
-
        
-
    
-
   IShape shape = new Circle();
-
   shape.Draw(); // Outputs: Drawing a Circle
-
   ```
 
 - **Edge Case**: Interfaces cannot contain implementation (except default implementations in C# 8.0+) [[2]](690a06ed4ccfa2a2002c2ecf).
@@ -1088,31 +836,18 @@ Object-Oriented Programming (OOP) in C# revolves around defining classes, object
 - **Example**:
 
   ```csharp
-
   public enum DaysOfWeek
-
    
-
       Sunday,
-
       Monday,
-
       Tuesday,
-
       Wednesday,
-
       Thursday,
-
       Friday,
-
       Saturday
-
    
-
   var today = DaysOfWeek.Monday;
-
   Console.WriteLine($"Today is:  today "); // Outputs: Today is: Monday
-
   ```
 
 - **Edge Case**: Avoid assigning overlapping values to enum members unless intentional.
@@ -1124,29 +859,17 @@ Object-Oriented Programming (OOP) in C# revolves around defining classes, object
 - **Example**:
 
   ```csharp
-
   public delegate void PrintMessage(string message);
-
   public class Messenger
-
    
-
       public void Print(string message)
-
        
-
           Console.WriteLine(message);
-
        
-
    
-
   var messenger = new Messenger();
-
   PrintMessage print = messenger.Print;
-
   print("Hello, World!"); // Outputs: Hello, World!
-
   ```
 
 - **Edge Case**: Be cautious of null delegates; always check before invoking.

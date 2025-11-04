@@ -12,6 +12,7 @@ namespace Data_Analyzer
         public static string filePath { get; set; }
         public static string fileName { get; set; }
         public static byte[] fileBytes;
+        public static int fileBytesLength;
         public static double[,] digraph = new double[256, 256];
 
         public OpenedFile(string filePath)
@@ -19,6 +20,7 @@ namespace Data_Analyzer
             OpenedFile.filePath = filePath;
             fileName = Path.GetFileName(filePath);
             fileBytes = File.ReadAllBytes(OpenedFile.filePath);
+            fileBytesLength = fileBytes.Length;
             digraph = GetDigraph();
         }
 
@@ -41,8 +43,14 @@ namespace Data_Analyzer
                 return fileBytes[start..end];
         }
 
-        public static double[,] GetWrappedByteData(double ratioX, double ratioY)
+        public static ReadOnlyMemory<byte> GetRange(int start, int end)
         {
+            return fileBytes.AsMemory(start, end - start);
+        }
+
+        public static double[,] GetWrappedByteData(ReadOnlyMemory<byte> byteRange, double ratioX, double ratioY)
+        {
+            var span = byteRange.Span;
             int rX = (int)ratioX;
             int rY = (int)ratioY;
 
@@ -51,7 +59,7 @@ namespace Data_Analyzer
             rX /= g;
             rY /= g;
 
-            int length = fileBytes.Length;
+            int length = span.Length;
 
             // number of ratio blocks needed
             int blocks = (int)Math.Ceiling(length / (double)(rX * rY));
@@ -69,7 +77,7 @@ namespace Data_Analyzer
             {
                 int y = i / width;
                 int x = i % width;
-                result[y, x] = fileBytes[i];
+                result[y, x] = span[i];
             }
 
             // padding already 0.0 for doubles

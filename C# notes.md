@@ -1232,4 +1232,157 @@ In C#, namespaces and assemblies are used to organise code and manage scope. Bel
 | `extern`      | Declares external methods or aliases for interoperability.                 |
 | `assembly`    | Refers to a compiled code library and allows setting assembly attributes.   |
 
+<br>
+<br>
+
+# **7. Modifiers** in detail
+
+Modifiers in C# are used to alter the behaviour of declarations, such as variables, methods, or classes. Below are examples and edge cases for the key modifiers:
+
+---
+
+### **`const`**
+
+- **Description**: Declares a compile-time constant. The value must be assigned at the time of declaration and cannot be changed later [[1]](690a0e86df96efc04e639bf8).
+
+- **Example**:
+
+  ```csharp
+  public class Constants
+  {
+      public const double Pi = 3.14159;
+      public void Display()
+      {
+          Console.WriteLine($"Value of Pi: {Pi}");
+      }
+  }
+  var constants = new Constants();
+  constants.Display(); // Outputs: Value of Pi: 3.14159
+  ```
+
+- **Edge Case**: `const` values are replaced at compile time. If a `const` value is changed, all dependent assemblies must be recompiled to reflect the updated value [[2]](690a0e86df96efc04e639be4).
+
+---
+
+### **`readonly`**
+
+- **Description**: Declares a field that can only be assigned during its declaration or in the constructor. It is evaluated at runtime.
+
+- **Example**:
+
+  ```csharp
+  public class ReadOnlyExample
+  {
+      public readonly int MaxValue;
+      public ReadOnlyExample(int maxValue)
+      {
+          MaxValue = maxValue; // Can only be assigned here or during declaration
+      }
+  }
+  var example = new ReadOnlyExample(100);
+  Console.WriteLine(example.MaxValue); // Outputs: 100
+  // example.MaxValue = 200; // Error: Cannot modify a readonly field
+  ```
+
+- **Edge Case**: Unlike `const`, `readonly` fields can have different values for each instance of a class.
+
+---
+
+### **`static`**
+
+- **Description**: Declares a member that belongs to the type itself rather than an instance of the type.
+
+- **Example**:
+
+  ```csharp
+  public class StaticExample
+  {
+      public static int Counter = 0;
+      public static void IncrementCounter()
+      {
+          Counter++;
+      }
+  }
+  StaticExample.IncrementCounter();
+  Console.WriteLine(StaticExample.Counter); // Outputs: 1
+  ```
+
+- **Edge Case**: Static members cannot access instance members directly. Overusing static members can lead to tightly coupled code.
+
+---
+
+### **`volatile`**
+
+- **Description**: Indicates that a field may be modified by multiple threads simultaneously. Prevents the compiler from optimising the code in a way that assumes the value does not change unexpectedly.
+
+- **Example**:
+
+  ```csharp
+  public class VolatileExample
+  {
+      private volatile bool _isRunning;
+      public void Stop()
+      {
+          _isRunning = false; // Ensures changes are visible across threads
+      }
+  }
+  ```
+
+- **Edge Case**: `volatile` only works with simple types (e.g., `int`, `bool`) and does not guarantee atomicity for compound operations like incrementing a value.
+
+---
+
+### **`async`**
+
+- **Description**: Marks a method as asynchronous, allowing it to run asynchronously and return a `Task` or `Task<T>`.
+
+- **Example**:
+
+  ```csharp
+  public async Task FetchDataAsync()
+  {
+      Console.WriteLine("Fetching data...");
+      await Task.Delay(2000); // Simulates an asynchronous operation
+      Console.WriteLine("Data fetched.");
+  }
+  var example = new Program();
+  await example.FetchDataAsync();
+  ```
+
+- **Edge Case**: An `async` method must contain at least one `await` statement; otherwise, it will run synchronously and may cause confusion.
+
+---
+
+### **`await`**
+
+- **Description**: Pauses the execution of an `async` method until the awaited `Task` is complete.
+
+- **Example**:
+
+  ```csharp
+  public async Task ProcessDataAsync()
+  {
+      Console.WriteLine("Processing...");
+      await Task.Delay(1000); // Waits for 1 second
+      Console.WriteLine("Processing complete.");
+  }
+  await ProcessDataAsync();
+  ```
+
+- **Edge Case**: `await` can only be used inside an `async` method. Forgetting to use `await` on an asynchronous call can lead to unexpected behaviour, as the method will continue executing without waiting for the task to complete.
+
+---
+
+### **Summary Table**
+
+| **Modifier**   | **Purpose**                                                                 |
+|-----------------|-----------------------------------------------------------------------------|
+| `const`         | Declares a compile-time constant.                                           |
+| `readonly`      | Declares a field that can only be assigned during declaration or in a constructor. |
+| `static`        | Declares a member that belongs to the type itself rather than an instance.  |
+| `volatile`      | Ensures a field is not optimised by the compiler and is visible across threads. |
+| `async`         | Marks a method as asynchronous, allowing it to return a `Task` or `Task<T>`. |
+| `await`         | Pauses execution of an `async` method until the awaited `Task` is complete. |
+
+
 ```

@@ -1384,5 +1384,354 @@ Modifiers in C# are used to alter the behaviour of declarations, such as variabl
 | `async`         | Marks a method as asynchronous, allowing it to return a `Task` or `Task<T>`. |
 | `await`         | Pauses execution of an `async` method until the awaited `Task` is complete. |
 
+<br>
+<br>
+
+# **9. Miscellaneous Keywords** in detail
+
+### **`is`**
+
+- **Description**: Checks if an object is compatible with a specific type.
+
+- **Example**:
+
+  ```csharp
+  object obj = "Hello, World!";
+  if (obj is string)
+      Console.WriteLine("The object is a string.");
+  ```
+
+- **Edge Case**: `is` returns `false` for `null` values, even if the type matches [[1]](690a10caf626bc4a3fdaf6ff).
+
+---
+
+### **`as`**
+
+- **Description**: Performs a safe type conversion. Returns `null` if the conversion fails instead of throwing an exception.
+
+- **Example**:
+
+  ```csharp
+  object obj = "Hello, World!";
+  string str = obj as string;
+  if (str != null)
+      Console.WriteLine($"String value: {str}");
+  ```
+
+- **Edge Case**: Use `as` only with reference types or nullable types. For value types, use explicit casting [[1]](690a10caf626bc4a3fdaf6ff).
+
+---
+
+### **`typeof`**
+
+- **Description**: Gets the `Type` object for a specified type.
+
+- **Example**:
+
+  ```csharp
+  Type type = typeof(int);
+  Console.WriteLine(type.FullName); // Outputs: System.Int32
+  ```
+
+- **Edge Case**: Use `GetType()` for runtime type checking of an object instance instead of `typeof`.
+
+---
+
+### **`sizeof`**
+
+- **Description**: Gets the size (in bytes) of a value type.
+
+- **Example**:
+
+  ```csharp
+  unsafe
+  {
+      Console.WriteLine($"Size of int: {sizeof(int)}"); // Outputs: Size of int: 4
+  }
+  ```
+
+- **Edge Case**: `sizeof` can only be used in an `unsafe` context for custom structs.
+
+---
+
+### **`checked` / `unchecked`**
+
+- **Description**: Controls overflow checking for arithmetic operations.
+
+- **Example**:
+
+  ```csharp
+  int max = int.MaxValue;
+  try
+  {
+      int result = checked(max + 1); // Throws OverflowException
+  }
+  catch (OverflowException)
+  {
+      Console.WriteLine("Overflow occurred.");
+  }
+  int uncheckedResult = unchecked(max + 1); // No exception, wraps around
+  Console.WriteLine(uncheckedResult); // Outputs: -2147483648
+  ```
+
+- **Edge Case**: Use `checked` for critical calculations to avoid silent overflows.
+
+---
+
+### **`lock`**
+
+- **Description**: Ensures that a block of code is executed by only one thread at a time.
+
+- **Example**:
+
+  ```csharp
+  private static readonly object _lock = new object();
+  void CriticalSection()
+  {
+      lock (_lock)
+      {
+          Console.WriteLine("Thread-safe operation.");
+      }
+  }
+  ```
+
+- **Edge Case**: Deadlocks can occur if multiple threads lock resources in different orders.
+
+---
+
+### **`using`**
+
+- **Description**: Manages resources or imports namespaces.
+
+- **Example 1**: **Resource Management**
+
+  ```csharp
+  using (var file = new System.IO.StreamWriter("example.txt"))
+  {
+      file.WriteLine("This is a test.");
+  }
+  // The file is automatically closed when exiting the `using` block.
+  ```
+
+- **Example 2**: **Namespace Import**
+
+  ```csharp
+  using System;
+  Console.WriteLine("Hello, World!");
+  ```
+
+- **Edge Case**: Forgetting to use `using` for resource management can lead to resource leaks [[2]](690a10caf626bc4a3fdaf707).
+
+---
+
+### **`fixed`**
+
+- **Description**: Pins a variable in memory to prevent the garbage collector from moving it.
+
+- **Example**:
+
+  ```csharp
+  unsafe
+  {
+      int[] numbers = new int[] { 1, 2, 3 };
+      fixed (int* p = numbers)
+      {
+          Console.WriteLine(*p); // Outputs: 1
+      }
+  }
+  ```
+
+- **Edge Case**: Can only be used in an `unsafe` context and is limited to unmanaged types.
+
+---
+
+### **`unsafe`**
+
+- **Description**: Allows the use of pointer types and unsafe code blocks.
+
+- **Example**:
+
+  ```csharp
+  unsafe
+  {
+      int number = 42;
+      int* p = &number;
+      Console.WriteLine($"Value: {*p}"); // Outputs: Value: 42
+  }
+  ```
+
+- **Edge Case**: Unsafe code can lead to memory corruption if not used carefully.
+
+---
+
+# **10. Contextual Keywords** in detail
+
+### **`add` and `remove`**
+
+- **Description**: Used to define custom event accessors.
+
+- **Example**:
+
+  ```csharp
+  public class EventExample
+  {
+      private event EventHandler _myEvent;
+      public event EventHandler MyEvent
+      {
+          add { _myEvent += value; }
+          remove { _myEvent -= value; }
+      }
+  }
+  ```
+
+- **Edge Case**: Ensure proper handling of event subscriptions to avoid memory leaks.
+
+---
+
+### **`get` and `set`**
+
+- **Description**: Define accessors for properties.
+
+- **Example**:
+
+  ```csharp
+  public class PropertyExample
+  {
+      private int _value;
+      public int Value
+      {
+          get { return _value; }
+          set { _value = value; }
+      }
+  }
+  ```
+
+- **Edge Case**: Avoid complex logic in `get` and `set` to maintain property simplicity.
+
+---
+
+### **`partial`**
+
+- **Description**: Allows a class, struct, or method to be split across multiple files.
+
+- **Example**:
+
+  ```csharp
+  // File1.cs
+  public partial class PartialClass
+  {
+      public void Method1() => Console.WriteLine("Method1");
+  }
+  // File2.cs
+  public partial class PartialClass
+  {
+      public void Method2() => Console.WriteLine("Method2");
+  }
+  var obj = new PartialClass();
+  obj.Method1();
+  obj.Method2();
+  ```
+
+- **Edge Case**: Overuse of `partial` can make code harder to navigate.
+
+---
+
+### **`yield`**
+
+- **Description**: Returns elements one at a time in an iterator method.
+
+- **Example**:
+
+  ```csharp
+  public IEnumerable<int> GetNumbers()
+  {
+      for (int i = 0; i < 5; i++)
+          yield return i;
+  }
+  foreach (var number in GetNumbers())
+      Console.WriteLine(number);
+  ```
+
+- **Edge Case**: Using `yield` in non-iterator methods will result in a compile-time error.
+
+---
+
+### **`where`**
+
+- **Description**: Specifies constraints on generic type parameters.
+
+- **Example**:
+
+  ```csharp
+  public class GenericExample<T> where T : class
+  {
+      public T Value { get; set; }
+  }
+  ```
+
+- **Edge Case**: Ensure constraints are meaningful to avoid unnecessary complexity.
+
+---
+
+### **`dynamic`**
+
+- **Description**: Allows operations to be resolved at runtime instead of compile time.
+
+- **Example**:
+
+  ```csharp
+  dynamic obj = "Hello, World!";
+  Console.WriteLine(obj.Length); // Resolved at runtime
+  ```
+
+- **Edge Case**: Overuse of `dynamic` can lead to runtime errors that are hard to debug.
+
+---
+
+### **`global`**
+
+- **Description**: Refers to the global namespace, avoiding conflicts with local namespaces.
+
+- **Example**:
+
+  ```csharp
+  namespace MyNamespace
+  {
+      class Program
+      {
+          static void Main()
+          {
+              global::System.Console.WriteLine("Hello, World!");
+          }
+      }
+  }
+  ```
+
+- **Edge Case**: Use `global` only when necessary to avoid confusion in namespace resolution.
+
+---
+
+### **Summary Table**
+
+| **Keyword**   | **Purpose**                                                                 |
+|---------------|-----------------------------------------------------------------------------|
+| `is`          | Checks object compatibility with a type.                                   |
+| `as`          | Performs safe type conversion.                                             |
+| `typeof`      | Gets the `Type` object for a type.                                         |
+| `sizeof`      | Gets the size of a value type.                                             |
+| `checked`     | Enables overflow checking for arithmetic operations.                       |
+| `unchecked`   | Disables overflow checking for arithmetic operations.                      |
+| `lock`        | Ensures thread safety by locking a block of code.                          |
+| `using`       | Manages resources or imports namespaces.                                   |
+| `fixed`       | Pins a variable in memory to prevent garbage collection.                   |
+| `unsafe`      | Allows unsafe code blocks for pointer manipulation.                        |
+| `add`/`remove`| Define custom event accessors.                                             |
+| `get`/`set`   | Define property accessors.                                                 |
+| `partial`     | Splits a class, struct, or method across multiple files.                   |
+| `yield`       | Returns elements one at a time in an iterator method.                      |
+| `where`       | Specifies constraints on generic type parameters.                          |
+| `dynamic`     | Allows runtime resolution of operations.                                   |
+| `global`      | Refers to the global namespace to avoid conflicts.                         |
+
 
 ```

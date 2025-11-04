@@ -54,6 +54,7 @@
 
                 <!-- Vertical RangeSlider -->
                 <xctk:RangeSlider
+                    x:Name="FirstRangeSlider"
                     Orientation="Vertical"
                     Minimum="0" Maximum="100"
                     LowerValue="20" HigherValue="80"
@@ -78,6 +79,7 @@
 
                 <!-- Vertical RangeSlider -->
                 <xctk:RangeSlider
+                    x:Name="SecondRangeSlider"
                     Orientation="Vertical"
                     Minimum="0" Maximum="100"
                     LowerValue="10" HigherValue="70"

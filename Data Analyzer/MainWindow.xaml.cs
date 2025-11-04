@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using ScottPlot;
 using System.IO;
 using System.Text;
 using System.Windows;
@@ -18,6 +19,7 @@ namespace Data_Analyzer
     /// </summary>
     public partial class MainWindow : Window
     {
+        private static OpenedFile openedFile;
         public MainWindow()
         {
             InitializeComponent();
@@ -30,10 +32,29 @@ namespace Data_Analyzer
             {
                 string filePath = openFileDialog.FileName;
                 Console.WriteLine(filePath+"opened");
-                OpenedFile openedFile = new OpenedFile(filePath);
-                Console.WriteLine("asdf");
+                openedFile = new OpenedFile(filePath);
+                startProcessPipeline();
+
             }
                 
+        }
+
+        private void startProcessPipeline()
+        {
+            Console.WriteLine(FirstRangeSlider.LowerValue);
+            Console.WriteLine(FirstRangeSlider.HigherValue);
+
+            ScottPlot.Plottables.Heatmap leftheatmap = PlotLeft1.Plot.Add.Heatmap(OpenedFile.GetWrappedByteData(PlotLeft1.Height, PlotLeft1.Width));
+            PlotLeft1.Plot.Axes.AutoScale();
+            PlotLeft1.Refresh();
+
+
+
+            PlotTabA.Plot.Add.Heatmap(OpenedFile.digraph);
+            PlotTabA.Plot.Axes.AutoScale();
+            PlotTabA.Refresh();
+
+
         }
     }
 }

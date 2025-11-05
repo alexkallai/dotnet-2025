@@ -489,7 +489,7 @@ Control flow keywords in C# are used to dictate the execution path of a program.
             2 or 1 => 'D',
             0 => 'E',
             _ => '!',
-        }
+        };
     }
     ```
 

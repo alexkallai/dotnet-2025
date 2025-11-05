@@ -7,6 +7,7 @@ namespace Data_Analyzer
         public static string filePath { get; set; }
         public static string fileName { get; set; }
         public static byte[] fileBytes;
+        public static double[] fileDoubleBytes;
         public static int fileBytesLength;
         public static double[,] digraph = new double[256, 256];
 
@@ -15,6 +16,8 @@ namespace Data_Analyzer
             OpenedFile.filePath = filePath;
             fileName = Path.GetFileName(filePath);
             fileBytes = File.ReadAllBytes(OpenedFile.filePath);
+            // TODO add immediate conversion and null fileBytest
+            //fileDoubleBytes = Array.ConvertAll(fileBytes, new Converter<byte, double>(Convert.ToDouble));
             fileBytesLength = fileBytes.Length;
             digraph = GetDigraph();
         }
@@ -38,9 +41,9 @@ namespace Data_Analyzer
             return fileBytes[start..end];
         }
 
-        public static ReadOnlyMemory<byte> GetRange(int start, int end)
+        public static ReadOnlyMemory<byte> GetRange(byte[] bytes, int start, int end)
         {
-            return fileBytes.AsMemory(start, end - start);
+            return bytes.AsMemory(start, end - start);
         }
 
         public static double[,] GetWrappedByteData(ReadOnlyMemory<byte> byteRange, double ratioX, double ratioY)

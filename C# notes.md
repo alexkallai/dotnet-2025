@@ -492,6 +492,17 @@ Control flow keywords in C# are used to dictate the execution path of a program.
         };
     }
     ```
+    ```csharp
+    // Pattern matching
+    char ConvertPointsToGrade(int points){
+        return points switch {
+            >= 90 => 'A',
+            >= 80 => 'B',
+            >= 50 => 'C',
+            _ => 'D', // anything below 50 gets a D
+        };
+    }
+    ```
 
 - **Edge Case**: Forgetting the `break` statement can cause fall-through behaviour, which might lead to unintended execution [[2]](690a05cb19377a2c24b73312).
 

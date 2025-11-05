@@ -42,38 +42,47 @@ namespace Data_Analyzer
 
         private void startProcessPipeline()
         {
+            double max1 = FirstRangeSlider.Maximum;
+            double invLow1 = (max1 - FirstRangeSlider.HigherValue) / max1;
+            double invHigh1 = (max1 - FirstRangeSlider.LowerValue) / max1;
 
-            int firstByteRangeStart = Convert.ToInt32(OpenedFile.fileDoubleBytes.Length * (FirstRangeSlider.LowerValue / FirstRangeSlider.Maximum));
-            int firstByteRangeEnd = Convert.ToInt32(OpenedFile.fileDoubleBytes.Length * (FirstRangeSlider.HigherValue / FirstRangeSlider.Maximum));
+            int firstByteRangeStart = (int)(OpenedFile.fileDoubleBytes.Length * invLow1);
+            int firstByteRangeEnd = (int)(OpenedFile.fileDoubleBytes.Length * invHigh1);
 
-            ReadOnlyMemory<double> firstRange = OpenedFile.fileDoubleBytes.AsMemory(firstByteRangeStart, firstByteRangeEnd - firstByteRangeStart);
-            //ReadOnlyMemory<byte> firstRange = OpenedFile.GetRange(OpenedFile.fileBytes, firstByteRangeStart, firstByteRangeEnd);
+            var firstRange = OpenedFile.fileDoubleBytes.AsMemory(firstByteRangeStart, firstByteRangeEnd - firstByteRangeStart);
             PlotLeft1.Plot.Clear();
-            PlotLeft1.Plot.Add.Heatmap(OpenedFile.GetWrappedByteData(firstRange.ToArray(), PlotLeft1.Height, PlotLeft1.Width));
+            PlotLeft1.Plot.Add.Heatmap(OpenedFile.GetWrappedByteData(firstRange.Span.ToArray(), PlotLeft1.Height, PlotLeft1.Width));
             RefreshPlot(PlotLeft1);
 
-            int secondByteRangeStart = Convert.ToInt32(firstRange.Length * (SecondRangeSlider.LowerValue / SecondRangeSlider.Maximum));
-            int secondByteRangeEnd = Convert.ToInt32(firstRange.Length * (SecondRangeSlider.HigherValue / SecondRangeSlider.Maximum));
-            ReadOnlyMemory<double> secondRange = firstRange.ToArray()[secondByteRangeStart..secondByteRangeEnd];
+
+            // second slider inverted the same way
+            double max2 = SecondRangeSlider.Maximum;
+            double invLow2 = (max2 - SecondRangeSlider.HigherValue) / max2;
+            double invHigh2 = (max2 - SecondRangeSlider.LowerValue) / max2;
+
+            int secondByteRangeStart = (int)(firstRange.Length * invLow2);
+            int secondByteRangeEnd = (int)(firstRange.Length * invHigh2);
+
+            var firstArr = firstRange.Span.ToArray();
+            var secondArr = firstArr[secondByteRangeStart..secondByteRangeEnd];
 
             PlotLeft2.Plot.Clear();
-            PlotLeft2.Plot.Add.Heatmap(OpenedFile.GetWrappedByteData(secondRange, PlotLeft2.Height, PlotLeft2.Width));
+            PlotLeft2.Plot.Add.Heatmap(OpenedFile.GetWrappedByteData(secondArr, PlotLeft2.Height, PlotLeft2.Width));
             RefreshPlot(PlotLeft2);
 
 
-
-            PlotTabA.Plot.Add.Heatmap(OpenedFile.GetDigraph(secondRange));
+            PlotTabA.Plot.Add.Heatmap(OpenedFile.GetDigraph(secondArr.ToArray()));
             PlotTabA.Plot.Axes.AutoScale();
             PlotTabA.Refresh();
 
-            // create an empty histogram and display it as a bar plot
-            var hist = ScottPlot.Statistics.Histogram.WithBinCount(count: 256, minValue: 0, maxValue: 256);
+            var hist = ScottPlot.Statistics.Histogram.WithBinCount(256, 0, 256);
             var histPlot = PlotTabB.Plot.Add.Histogram(hist);
             histPlot.BarWidthFraction = 0.8;
-            hist.AddRange(secondRange.ToArray());
+            hist.AddRange(secondArr);
             PlotTabB.Plot.Axes.AutoScale();
             PlotTabB.Refresh();
         }
+
 
         // Slider mouse up hook methods
         private void FirstRangeSlider_MouseUp(object sender, MouseButtonEventArgs e)

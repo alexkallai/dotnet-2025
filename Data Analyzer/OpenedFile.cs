@@ -6,7 +6,7 @@ namespace Data_Analyzer
     {
         public static string filePath { get; set; }
         public static string fileName { get; set; }
-        public static byte[] fileBytes;
+        //public static byte[] fileBytes;
         public static double[] fileDoubleBytes;
         public static int fileBytesLength;
         public static double[,] digraph = new double[256, 256];
@@ -15,20 +15,18 @@ namespace Data_Analyzer
         {
             OpenedFile.filePath = filePath;
             fileName = Path.GetFileName(filePath);
-            fileBytes = File.ReadAllBytes(OpenedFile.filePath);
+            //fileBytes = File.ReadAllBytes(OpenedFile.filePath);
             // TODO add immediate conversion and null fileBytest
-            //fileDoubleBytes = Array.ConvertAll(fileBytes, new Converter<byte, double>(Convert.ToDouble));
-            fileBytesLength = fileBytes.Length;
-            digraph = GetDigraph();
+            fileDoubleBytes = Array.ConvertAll(File.ReadAllBytes(OpenedFile.filePath), new Converter<byte, double>(Convert.ToDouble));
         }
 
-        public static double[,] GetDigraph()
+        public static double[,] GetDigraph(ReadOnlyMemory<double> range)
         {
             double[,] workDigraph = new double[256, 256];
-            for (int i = 0; i < fileBytes.GetLength(0) - 1; i++)
+            for (int i = 0; i < range.Length - 1; i++)
             {
-                int first = Convert.ToInt32(fileBytes[i]);
-                int second = Convert.ToInt32(fileBytes[i + 1]);
+                int first = Convert.ToInt32(range.ToArray()[i]);
+                int second = Convert.ToInt32(range.ToArray()[i + 1]);
                 workDigraph[first, second] += 1;
 
             }
@@ -36,19 +34,15 @@ namespace Data_Analyzer
 
         }
 
-        public static byte[] GetFirstRange(int start, int end)
-        {
-            return fileBytes[start..end];
-        }
 
         public static ReadOnlyMemory<byte> GetRange(byte[] bytes, int start, int end)
         {
             return bytes.AsMemory(start, end - start);
         }
 
-        public static double[,] GetWrappedByteData(ReadOnlyMemory<byte> byteRange, double ratioX, double ratioY)
+        public static double[,] GetWrappedByteData(ReadOnlyMemory<double> doubleRange, double ratioX, double ratioY)
         {
-            var span = byteRange.Span;
+            var span = doubleRange.Span;
             int rX = (int)ratioX;
             int rY = (int)ratioY;
 

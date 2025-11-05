@@ -16,19 +16,19 @@ while (true)
 
     while (true)
     {
-        char selection = Convert.ToChar(Console.ReadLine()[0]);
+        string selection = Console.ReadLine();
         bool finished = false;
         switch (selection)
         {
-            case 'A':
+            case "A":
                 Console.WriteLine(number1 + number2);
                 finished = true;
                 break;
-            case 'S':
+            case "S":
                 Console.WriteLine(number1 - number2);
                 finished = true;
                 break;
-            case 'M':
+            case "M":
                 Console.WriteLine(number1 * number2);
                 finished = true;
                 break;
@@ -44,3 +44,4 @@ while (true)
     }
 
 }
+

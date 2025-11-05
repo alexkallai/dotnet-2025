@@ -1771,5 +1771,29 @@ Modifiers in C# are used to alter the behaviour of declarations, such as variabl
   ```
 
 
+# Arrays
 
-```
+  ```csharp
+    // Array with 3 ints
+    int[] numbers = new int[3]; // filled with 0-s
+    int lastElement = numbers[numbers.Length - 1]
+    int lastElement = numbers[ˇ1]
+  ```
+
+# Multi-dimensional Arrays
+
+  ```csharp
+    // 2D char array
+    char[,] letters = new char[2, 3];
+    letters[0, 0] = 'A';
+    letters[0, 1] = 'A';
+    letters[0, 2] = 'A';
+    letters[1, 0] = 'A';
+    letters[1, 1] = 'A';
+    letters[1, 2] = 'A';
+
+    // Get the length of the 0th and 1st dimensions of the array
+    var height = letters.GetLength(0);
+    var width = letters.GetLength(1);
+
+  ```

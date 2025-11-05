@@ -42,10 +42,7 @@ namespace Data_Analyzer
 
         private void startProcessPipeline()
         {
-            Console.WriteLine(FirstRangeSlider.LowerValue);
-            Console.WriteLine(FirstRangeSlider.HigherValue);
-            double firstRangeMin = FirstRangeSlider.Minimum;
-            double firstRangeMax = FirstRangeSlider.Maximum;
+
             int firstByteRangeStart = Convert.ToInt32(OpenedFile.fileDoubleBytes.Length * (FirstRangeSlider.LowerValue / FirstRangeSlider.Maximum));
             int firstByteRangeEnd = Convert.ToInt32(OpenedFile.fileDoubleBytes.Length * (FirstRangeSlider.HigherValue / FirstRangeSlider.Maximum));
 
@@ -69,7 +66,13 @@ namespace Data_Analyzer
             PlotTabA.Plot.Axes.AutoScale();
             PlotTabA.Refresh();
 
-
+            // create an empty histogram and display it as a bar plot
+            var hist = ScottPlot.Statistics.Histogram.WithBinCount(count: 256, minValue: 0, maxValue: 256);
+            var histPlot = PlotTabB.Plot.Add.Histogram(hist);
+            histPlot.BarWidthFraction = 0.8;
+            hist.AddRange(secondRange.ToArray());
+            PlotTabB.Plot.Axes.AutoScale();
+            PlotTabB.Refresh();
         }
 
         // Slider mouse up hook methods
@@ -88,6 +91,8 @@ namespace Data_Analyzer
             Console.WriteLine($"Finished: {lo} - {hi}");
             startProcessPipeline();
         }
+
+
 
     }
 }

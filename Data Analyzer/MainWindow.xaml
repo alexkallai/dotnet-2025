@@ -5,10 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ScottPlot="clr-namespace:ScottPlot.WPF;assembly=ScottPlot.WPF"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:local="clr-namespace:Data_Analyzer.Converters"
         mc:Ignorable="d"
         Title="Data Analyzer"
         Width="1400" Height="900"
         WindowStartupLocation="CenterScreen">
+    
 
     <DockPanel>
         <!-- Menu Bar (Top) -->
@@ -52,12 +54,14 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
+
                 <!-- Vertical RangeSlider -->
                 <xctk:RangeSlider
                     x:Name="FirstRangeSlider"
                     Orientation="Vertical"
                     Minimum="0" Maximum="10000"
-                    LowerValue="0" HigherValue="10000"
+                    LowerValue="0"
+                    HigherValue="10000"
                     TickFrequency="5"
                     IsSnapToTickEnabled="True"
                     VerticalAlignment="Stretch"
@@ -97,10 +101,10 @@
 
             <!-- Column 3 (Tabbed View) -->
             <TabControl Grid.Column="2" Margin="5">
-                <TabItem Header="Plot A">
+                <TabItem Header="Digraph">
                     <ScottPlot:WpfPlot x:Name="PlotTabA" />
                 </TabItem>
-                <TabItem Header="Plot B">
+                <TabItem Header="Histogram">
                     <ScottPlot:WpfPlot x:Name="PlotTabB" />
                 </TabItem>
                 <TabItem Header="Plot C">

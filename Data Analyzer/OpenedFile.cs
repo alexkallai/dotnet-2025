@@ -22,17 +22,19 @@ namespace Data_Analyzer
 
         public static double[,] GetDigraph(ReadOnlyMemory<double> range)
         {
-            double[,] workDigraph = new double[256, 256];
-            for (int i = 0; i < range.Length - 1; i++)
+            var span = range.Span;
+            var workDigraph = new double[256, 256];
+
+            for (int i = 0; i < span.Length - 1; i++)
             {
-                int first = Convert.ToInt32(range.ToArray()[i]);
-                int second = Convert.ToInt32(range.ToArray()[i + 1]);
-                workDigraph[first, second] += 1;
-
+                int first = (int)span[i];
+                int second = (int)span[i + 1];
+                workDigraph[first, second]++;
             }
-            return workDigraph;
 
+            return workDigraph;
         }
+
 
 
         public static ReadOnlyMemory<byte> GetRange(byte[] bytes, int start, int end)

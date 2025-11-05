@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using ScottPlot.Panels;
 using ScottPlot.WPF;
 using System.Windows;
 using System.Windows.Input;
@@ -11,11 +12,14 @@ namespace Data_Analyzer
     public partial class MainWindow : Window
     {
         private static OpenedFile openedFile;
+        private static ColorBar digraphColorbar;
         public MainWindow()
         {
             InitializeComponent();
             FirstRangeSlider.PreviewMouseLeftButtonUp += FirstRangeSlider_MouseUp;
             SecondRangeSlider.PreviewMouseLeftButtonUp += SecondRangeSlider_MouseUp;
+            PlotLeft1.Plot.Layout.Frameless();
+            PlotLeft2.Plot.Layout.Frameless();
 
         }
         private void btnOpenFile_Click(object sender, RoutedEventArgs e)
@@ -27,8 +31,6 @@ namespace Data_Analyzer
                 Console.WriteLine(filePath + "opened");
                 openedFile = new OpenedFile(filePath);
                 startProcessPipeline();
-
-
             }
 
         }
@@ -70,11 +72,19 @@ namespace Data_Analyzer
             PlotLeft2.Plot.Add.Heatmap(OpenedFile.GetWrappedByteData(secondArr, PlotLeft2.Height, PlotLeft2.Width));
             RefreshPlot(PlotLeft2);
 
+            PlotTabA.Plot.Clear();
+            try
+            {
+                PlotTabA.Plot.Remove(digraphColorbar);
+            }
+            catch { }
 
-            PlotTabA.Plot.Add.Heatmap(OpenedFile.GetDigraph(secondArr.ToArray()));
+            var heatmap = PlotTabA.Plot.Add.Heatmap(OpenedFile.GetDigraph(secondArr.ToArray()));
+            digraphColorbar = PlotTabA.Plot.Add.ColorBar(heatmap);
             PlotTabA.Plot.Axes.AutoScale();
             PlotTabA.Refresh();
 
+            PlotTabB.Plot.Clear();
             var hist = ScottPlot.Statistics.Histogram.WithBinCount(256, 0, 256);
             var histPlot = PlotTabB.Plot.Add.Histogram(hist);
             histPlot.BarWidthFraction = 0.8;

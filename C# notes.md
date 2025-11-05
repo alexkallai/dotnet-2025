@@ -1736,5 +1736,17 @@ Modifiers in C# are used to alter the behaviour of declarations, such as variabl
 | `dynamic`     | Allows runtime resolution of operations.                                   |
 | `global`      | Refers to the global namespace to avoid conflicts.                         |
 
+<br>
+<br>
+
+# String interpolation
+  ```csharp
+    int a = 2;
+    int b = 3;
+    Console.WriteLine($"Sum is {a}+{b} = {a+b}");
+    // Sum is 2+3 = 5
+  ```
+
+
 
 ```

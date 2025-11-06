@@ -159,33 +159,55 @@
 
             <!-- Column 3 (Tabbed View) -->
             <TabControl x:Name="Tabs" Grid.Column="2" Margin="5" SelectionChanged="TabControl_SelectionChanged">
+
                 <TabItem x:Name="Tab0" Header="Hex">
                     <control:HexEditor Name="hexEditor" />
                 </TabItem>
+
                 <TabItem x:Name="Tab1" Header="Digraph">
                     <ScottPlot:WpfPlot x:Name="PlotTabA" />
                 </TabItem>
+
                 <TabItem x:Name="Tab2" Header="Histogram">
                     <ScottPlot:WpfPlot x:Name="PlotTabB" />
                 </TabItem>
+
                 <TabItem x:Name="Tab3" Header="Hilbert 2D">
                     <ScottPlot:WpfPlot x:Name="PlotTabC" />
                 </TabItem>
+
                 <TabItem x:Name="Tab4" Header="Hilbert 3D">
                     <Grid>
                         <HelixToolkit:HelixViewport3D x:Name="Viewport" ZoomExtentsWhenLoaded="True">
                             <!-- Remember to add light to the scene -->
                             <HelixToolkit:SunLight/>
-
-
                             <ModelVisual3D x:Name="PointGroups"/>
-
                             <HelixToolkit:GridLinesVisual3D Width="8" Length="8" MinorDistance="1" MajorDistance="1" Thickness="0.01"/>
                         </HelixToolkit:HelixViewport3D>
-                        
                     </Grid>
                 </TabItem>
+
+                <!-- New Tab -->
+                <TabItem x:Name="Tab5" Header=" ">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <!-- WpfPlot -->
+                        <ScottPlot:WpfPlot x:Name="PlotTabD" Grid.Row="0" Margin="5" />
+
+                        <!-- Slider and Text Field -->
+                        <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center" Margin="5">
+                            <Slider x:Name="HorizontalSlider" Minimum="0" Maximum="100" Width="200" Margin="5" />
+                            <TextBox x:Name="SliderValueTextBox" Width="50" Margin="5" TextAlignment="Center" />
+                        </StackPanel>
+                    </Grid>
+                </TabItem>
+
             </TabControl>
+
         </Grid>
     </DockPanel>
 </Window>

@@ -5,6 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ScottPlot="clr-namespace:ScottPlot.WPF;assembly=ScottPlot.WPF"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:HelixToolkit="clr-namespace:HelixToolkit.Wpf;assembly=HelixToolkit.Wpf"
+
         mc:Ignorable="d"
         Title="Data Analyzer"
         Width="1400" Height="900"
@@ -106,11 +108,24 @@
                 <TabItem Header="Histogram">
                     <ScottPlot:WpfPlot x:Name="PlotTabB" />
                 </TabItem>
-                <TabItem Header="Plot C">
-                    <ScottPlot:WpfPlot x:Name="PlotTabC" />
-                </TabItem>
-                <TabItem Header="Plot D">
+                <TabItem Header="Hilbert 2D">
                     <ScottPlot:WpfPlot x:Name="PlotTabD" />
+                </TabItem>
+                <TabItem Header="Hilbert 3D">
+                    <Grid>
+                        <HelixToolkit:HelixViewport3D x:Name="Viewport" ZoomExtentsWhenLoaded="True">
+                            <!-- Remember to add light to the scene -->
+                            <HelixToolkit:SunLight/>
+
+                            
+                            <HelixToolkit:PointsVisual3D x:Name="MyPoints"
+                                 Size="3"
+                                 Color="Red" />
+
+                            <HelixToolkit:GridLinesVisual3D Width="8" Length="8" MinorDistance="1" MajorDistance="1" Thickness="0.01"/>
+                        </HelixToolkit:HelixViewport3D>
+                        
+                    </Grid>
                 </TabItem>
             </TabControl>
         </Grid>

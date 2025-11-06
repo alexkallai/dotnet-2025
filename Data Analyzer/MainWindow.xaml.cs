@@ -2,6 +2,7 @@
 using ScottPlot;
 using ScottPlot.Panels;
 using ScottPlot.WPF;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -50,7 +51,7 @@ namespace Data_Analyzer
             if (openFileDialog.ShowDialog() == true)
             {
                 string filePath = openFileDialog.FileName;
-                Console.WriteLine(filePath + "opened");
+                Trace.WriteLine(filePath + " opened");
                 openedFile = new OpenedFile(filePath);
                 startProcessPipeline();
             }
@@ -129,7 +130,7 @@ namespace Data_Analyzer
         {
             double lo = FirstRangeSlider.LowerValue;
             double hi = FirstRangeSlider.HigherValue;
-            Console.WriteLine($"Finished: {lo} - {hi}");
+            Trace.WriteLine($"Finished: {lo} - {hi}");
             startProcessPipeline();
         }
 
@@ -137,10 +138,30 @@ namespace Data_Analyzer
         {
             double lo = FirstRangeSlider.LowerValue;
             double hi = FirstRangeSlider.HigherValue;
-            Console.WriteLine($"Finished: {lo} - {hi}");
+            Trace.WriteLine($"Finished: {lo} - {hi}");
             startProcessPipeline();
         }
 
+        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (Tab1.IsSelected)
+            {
+                Trace.WriteLine("Tab1 selected");
+            }
+            if (Tab2.IsSelected)
+            {
+                Trace.WriteLine("Tab2 selected");
+            }
+            if (Tab3.IsSelected)
+            {
+                Trace.WriteLine("Tab3 selected");
+            }
+            if (Tab3.IsSelected)
+            {
+                Trace.WriteLine("Tab4 selected");
+            }
+
+        }
 
 
     }

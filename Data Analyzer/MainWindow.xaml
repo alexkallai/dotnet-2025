@@ -117,10 +117,8 @@
                             <!-- Remember to add light to the scene -->
                             <HelixToolkit:SunLight/>
 
-                            
-                            <HelixToolkit:PointsVisual3D x:Name="MyPoints"
-                                 Size="3"
-                                 Color="Red" />
+
+                            <ModelVisual3D x:Name="PointGroups"/>
 
                             <HelixToolkit:GridLinesVisual3D Width="8" Length="8" MinorDistance="1" MajorDistance="1" Thickness="0.01"/>
                         </HelixToolkit:HelixViewport3D>

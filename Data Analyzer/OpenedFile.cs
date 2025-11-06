@@ -5,6 +5,7 @@ namespace Data_Analyzer
     class OpenedFile
     {
         public static string filePath { get; set; }
+        public static bool initialized = false;
         public static string fileName { get; set; }
         //public static byte[] fileBytes;
         public static double[] fileDoubleBytes;
@@ -18,6 +19,7 @@ namespace Data_Analyzer
             //fileBytes = File.ReadAllBytes(OpenedFile.filePath);
             // TODO add immediate conversion and null fileBytest
             fileDoubleBytes = Array.ConvertAll(File.ReadAllBytes(OpenedFile.filePath), new Converter<byte, double>(Convert.ToDouble));
+            initialized = true;
         }
 
         public static double[,] GetDigraph(ReadOnlyMemory<double> range)

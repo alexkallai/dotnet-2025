@@ -1,4 +1,6 @@
-﻿using Microsoft.Win32;
+﻿using HelixToolkit.Wpf;
+using Microsoft.Win32;
+using OpenTK.Mathematics;
 using ScottPlot;
 using ScottPlot.Panels;
 using ScottPlot.WPF;
@@ -6,6 +8,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace Data_Analyzer
@@ -17,6 +20,7 @@ namespace Data_Analyzer
     {
         private static OpenedFile openedFile;
         private static ColorBar digraphColorbar;
+        private static double[] secondArr;
         public MainWindow()
         {
             InitializeComponent();
@@ -30,18 +34,7 @@ namespace Data_Analyzer
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            var pts = new Point3DCollection();
 
-            // demo: random points in a cube
-            var rand = new Random();
-            for (int i = 0; i < 500; i++)
-                pts.Add(new Point3D(
-                    rand.NextDouble() * 5,
-                    rand.NextDouble() * 5,
-                    rand.NextDouble() * 5));
-
-            MyPoints.Points = pts;        // attach to the visual
-            Viewport.ZoomExtents();       // optional: fit view
         }
 
 
@@ -93,7 +86,7 @@ namespace Data_Analyzer
             int secondByteRangeEnd = (int)(firstRange.Length * invHigh2);
 
             var firstArr = firstRange.Span.ToArray();
-            var secondArr = firstArr[secondByteRangeStart..secondByteRangeEnd];
+            secondArr = firstArr[secondByteRangeStart..secondByteRangeEnd];
 
             PlotLeft2.Plot.Clear();
             ScottPlot.Plottables.Heatmap heatMapSel2 = PlotLeft2.Plot.Add.Heatmap(OpenedFile.GetWrappedByteData(secondArr, PlotLeft2.Height, PlotLeft2.Width));
@@ -130,6 +123,8 @@ namespace Data_Analyzer
             digraphColorbar = PlotTabC.Plot.Add.ColorBar(heatmapHilbert);
             PlotTabC.Plot.Axes.AutoScale();
             PlotTabC.Refresh();
+
+            //ShowHilbert3D(secondArr.ToArray(), 0.0);
         }
 
 
@@ -164,13 +159,69 @@ namespace Data_Analyzer
             {
                 Trace.WriteLine("Tab3 selected");
             }
-            if (Tab3.IsSelected)
+            if (Tab4.IsSelected && OpenedFile.initialized)
             {
                 Trace.WriteLine("Tab4 selected");
+                ShowHilbert3D(secondArr.ToArray(), 0.0);
             }
 
         }
+        public void ShowHilbert3D(double[] data, double pad = 0)
+        {
+            var grid = HilbertArray.To3D(data, pad);
+            int n = grid.GetLength(0);
 
+            // value range for color mapping
+            double min = data.Min();
+            double max = data.Max();
+            double range = Math.Max(1e-12, max - min);
+
+            // simple gradient buckets
+            int buckets = 8;                     // increase for smoother colors
+            var visuals = new PointsVisual3D[buckets];
+            var pts = new Point3DCollection[buckets];
+
+            for (int b = 0; b < buckets; b++)
+            {
+                pts[b] = new Point3DCollection();
+                visuals[b] = new PointsVisual3D
+                {
+                    Size = 3,
+                    Color = ColorFromBucket(b, buckets)
+                };
+            }
+
+            // assign each Hilbert point to a bucket
+            for (int x = 0; x < n; x++)
+                for (int y = 0; y < n; y++)
+                    for (int z = 0; z < n; z++)
+                    {
+                        double v = grid[x, y, z];
+                        double t = (v - min) / range;         // 0..1
+                        int bucket = Math.Min(buckets - 1, (int)(t * buckets));
+                        pts[bucket].Add(new Point3D(x, y, z));
+                    }
+
+            // add visuals to scene
+            PointGroups.Children.Clear();
+            for (int b = 0; b < buckets; b++)
+            {
+                visuals[b].Points = pts[b];
+                PointGroups.Children.Add(visuals[b]);
+            }
+
+            Viewport.ZoomExtents();
+        }
+
+        // Simple color palette
+        private System.Windows.Media.Color ColorFromBucket(int index, int total)
+        {
+            double t = (double)index / (total - 1); // 0..1
+            byte r = (byte)(255 * t);
+            byte g = (byte)(255 * (1 - t));
+            byte b = (byte)(128 + 127 * Math.Sin(t * Math.PI));
+            return System.Windows.Media.Color.FromRgb(r, g, b);
+        }
 
     }
 }

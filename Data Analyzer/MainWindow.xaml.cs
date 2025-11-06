@@ -69,7 +69,19 @@ namespace Data_Analyzer
         private void startProcessPipeline()
         {
             // SELECTION PLOT 1
-            // the sliders are inverted in logic
+            var firstRange = GetFirstRange();
+            RefreshPlotLeft1(firstRange);
+
+            // SELECTION PLOT 2
+            secondArr = GetSecondRange(firstRange);
+            RefreshPlotLeft2(secondArr);
+
+            // Handle Tab-specific logic
+            HandleDisplayedTabDiagrams();
+        }
+
+        private Memory<double> GetFirstRange()
+        {
             double max1 = FirstRangeSlider.Maximum;
             double invLow1 = (max1 - FirstRangeSlider.HigherValue) / max1;
             double invHigh1 = (max1 - FirstRangeSlider.LowerValue) / max1;
@@ -77,15 +89,20 @@ namespace Data_Analyzer
             int firstByteRangeStart = (int)(OpenedFile.fileDoubleBytes.Length * invLow1);
             int firstByteRangeEnd = (int)(OpenedFile.fileDoubleBytes.Length * invHigh1);
 
-            var firstRange = OpenedFile.fileDoubleBytes.AsMemory(firstByteRangeStart, firstByteRangeEnd - firstByteRangeStart);
+            return OpenedFile.fileDoubleBytes.AsMemory(firstByteRangeStart, firstByteRangeEnd - firstByteRangeStart);
+        }
+
+        private void RefreshPlotLeft1(Memory<double> firstRange)
+        {
             PlotLeft1.Plot.Clear();
-            ScottPlot.Plottables.Heatmap heatMapSel1 = PlotLeft1.Plot.Add.Heatmap(OpenedFile.GetWrappedByteData(firstRange.Span.ToArray(), PlotLeft1.Height, PlotLeft1.Width));
-            //heatMapSel1.Colormap = usedColormap;
+            var heatMapSel1 = PlotLeft1.Plot.Add.Heatmap(
+                OpenedFile.GetWrappedByteData(firstRange.Span.ToArray(), PlotLeft1.Height, PlotLeft1.Width)
+            );
             RefreshPlot(PlotLeft1);
+        }
 
-
-            // SELECTION PLOT 1
-            // the sliders are inverted in logic
+        private double[] GetSecondRange(Memory<double> firstRange)
+        {
             double max2 = SecondRangeSlider.Maximum;
             double invLow2 = (max2 - SecondRangeSlider.HigherValue) / max2;
             double invHigh2 = (max2 - SecondRangeSlider.LowerValue) / max2;
@@ -94,25 +111,32 @@ namespace Data_Analyzer
             int secondByteRangeEnd = (int)(firstRange.Length * invHigh2);
 
             var firstArr = firstRange.Span.ToArray();
-            secondArr = firstArr[secondByteRangeStart..secondByteRangeEnd];
+            return firstArr[secondByteRangeStart..secondByteRangeEnd];
+        }
 
-            // HEX EDITOR
+        private void RefreshPlotLeft2(double[] secondArr)
+        {
+            PlotLeft2.Plot.Clear();
+            var heatMapSel2 = PlotLeft2.Plot.Add.Heatmap(
+                OpenedFile.GetWrappedByteData(secondArr, PlotLeft2.Height, PlotLeft2.Width)
+            );
+            RefreshPlot(PlotLeft2);
+        }
+
+        private void HandleHexEditor(double[] secondArr)
+        {
             List<byte> bytes = new();
             foreach (double d in secondArr)
             {
                 if (d >= byte.MinValue && d <= byte.MaxValue)
-                    bytes.Add((byte)d);     // truncates decimals
-                                            // else: skip it
+                    bytes.Add((byte)d); // truncates decimals
             }
             byte[] buffer = bytes.ToArray();
             hexEditor.Stream = new MemoryStream(buffer);
+        }
 
-            PlotLeft2.Plot.Clear();
-            ScottPlot.Plottables.Heatmap heatMapSel2 = PlotLeft2.Plot.Add.Heatmap(OpenedFile.GetWrappedByteData(secondArr, PlotLeft2.Height, PlotLeft2.Width));
-            //heatMapSel1.Colormap = usedColormap;
-            RefreshPlot(PlotLeft2);
-
-            // DIGRAPH
+        private void HandleDigraph(double[] secondArr)
+        {
             PlotTabA.Plot.Clear();
             try
             {
@@ -120,13 +144,15 @@ namespace Data_Analyzer
             }
             catch { }
 
-            var heatmap = PlotTabA.Plot.Add.Heatmap(OpenedFile.GetDigraph(secondArr.ToArray()));
+            var heatmap = PlotTabA.Plot.Add.Heatmap(OpenedFile.GetDigraph(secondArr));
             heatmap.Colormap = new ScottPlot.Colormaps.Greens();
             digraphColorbar = PlotTabA.Plot.Add.ColorBar(heatmap);
             PlotTabA.Plot.Axes.AutoScale();
             PlotTabA.Refresh();
+        }
 
-            // HISTOGRAM
+        private void HandleHistogram(double[] secondArr)
+        {
             PlotTabB.Plot.Clear();
             var hist = ScottPlot.Statistics.Histogram.WithBinCount(256, 0, 256);
             var histPlot = PlotTabB.Plot.Add.Histogram(hist);
@@ -134,22 +160,24 @@ namespace Data_Analyzer
             hist.AddRange(secondArr);
             PlotTabB.Plot.Axes.AutoScale();
             PlotTabB.Refresh();
+        }
 
-            // 2D Hilbert
+        private void HandleHilbert(double[] secondArr)
+        {
             PlotTabC.Plot.Clear();
             try
             {
                 PlotTabC.Plot.Remove(hilbertColorbar);
             }
             catch { }
-            var heatmapHilbert = PlotTabC.Plot.Add.Heatmap(HilbertArray.To2D(secondArr.ToArray(), 0.0));
+
+            var heatmapHilbert = PlotTabC.Plot.Add.Heatmap(HilbertArray.To2D(secondArr, 0.0));
             heatmapHilbert.Colormap = new ScottPlot.Colormaps.Greens();
             hilbertColorbar = PlotTabC.Plot.Add.ColorBar(heatmapHilbert);
             PlotTabC.Plot.Axes.AutoScale();
             PlotTabC.Refresh();
-
-            //ShowHilbert3D(secondArr.ToArray(), 0.0);
         }
+
 
 
         // Slider mouse up hook methods
@@ -169,24 +197,40 @@ namespace Data_Analyzer
             startProcessPipeline();
         }
 
-        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void HandleDisplayedTabDiagrams()
         {
+            // Handle Tab-specific logic
+            if (Tab0.IsSelected)
+            {
+                HandleHexEditor(secondArr);
+            }
+
             if (Tab1.IsSelected)
             {
-                Trace.WriteLine("Tab1 selected");
+                HandleDigraph(secondArr);
             }
+
             if (Tab2.IsSelected)
             {
-                Trace.WriteLine("Tab2 selected");
+                HandleHistogram(secondArr);
             }
+
             if (Tab3.IsSelected)
             {
-                Trace.WriteLine("Tab3 selected");
+                HandleHilbert(secondArr);
             }
-            if (Tab4.IsSelected && OpenedFile.initialized)
+            if (Tab4.IsSelected)
             {
-                Trace.WriteLine("Tab4 selected");
+
                 ShowHilbert3D(secondArr.ToArray(), 0.0);
+            }
+        }
+
+        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (OpenedFile.initialized)
+            {
+                HandleDisplayedTabDiagrams();
             }
 
         }

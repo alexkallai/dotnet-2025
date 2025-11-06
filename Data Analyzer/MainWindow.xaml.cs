@@ -13,6 +13,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using static Data_Analyzer.OpenedFile;
 
 namespace Data_Analyzer
 {
@@ -145,7 +146,8 @@ namespace Data_Analyzer
             catch { }
 
             var heatmap = PlotTabA.Plot.Add.Heatmap(OpenedFile.GetDigraph(secondArr));
-            heatmap.Colormap = new ScottPlot.Colormaps.Greens();
+            heatmap.Colormap = new ScottPlot.Colormaps.Turbo();
+            heatmap.Colormap = new SharpTurbo();
             digraphColorbar = PlotTabA.Plot.Add.ColorBar(heatmap);
             PlotTabA.Plot.Axes.AutoScale();
             PlotTabA.Refresh();

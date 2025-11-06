@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using ScottPlot;
+using ScottPlot.Colormaps;
+using System.IO;
 
 namespace Data_Analyzer
 {
@@ -89,4 +91,62 @@ namespace Data_Analyzer
 
 
     }
+
+    // TODO move this to separate class
+    public class SharpTurbo : IColormap
+    {
+        public string Name => "SharpTurbo";
+
+        private readonly CustomPalette Colormap;
+
+        public Color GetColor(double position) => Colormap.GetColor(position);
+
+        public SharpTurbo()
+        {
+            // Define a custom ARGB array with a sharp change at the start
+            uint[] argbs = new uint[256];
+
+            // First value is black (ARGB: 0xFF000000)
+            argbs[0] = 0xFF000000;
+
+            // Second value is a distinct colour (e.g., red, ARGB: 0xFFFF0000)
+            argbs[1] = 0xFFFF0000;
+
+            // Fill the rest with a smooth gradient (e.g., Turbo colormap or any other gradient)
+            for (int i = 2; i < 256; i++)
+            {
+                // Example: Linear gradient from red to blue
+                double t = (i - 2) / 253.0; // Normalize to [0, 1] for the remaining range
+                argbs[i] = InterpolateColor(0xFFFF0000, 0xFF0000FF, t); // Interpolate between red and blue
+            }
+
+            // Convert ARGB values to Color array
+            Color[] colors = argbs.Select(Color.FromARGB).ToArray();
+
+            // Create the custom palette
+            Colormap = new CustomPalette(colors);
+        }
+
+        // Helper method to interpolate between two colours
+        private uint InterpolateColor(uint startColor, uint endColor, double t)
+        {
+            byte startA = (byte)((startColor >> 24) & 0xFF);
+            byte startR = (byte)((startColor >> 16) & 0xFF);
+            byte startG = (byte)((startColor >> 8) & 0xFF);
+            byte startB = (byte)(startColor & 0xFF);
+
+            byte endA = (byte)((endColor >> 24) & 0xFF);
+            byte endR = (byte)((endColor >> 16) & 0xFF);
+            byte endG = (byte)((endColor >> 8) & 0xFF);
+            byte endB = (byte)(endColor & 0xFF);
+
+            byte a = (byte)(startA + t * (endA - startA));
+            byte r = (byte)(startR + t * (endR - startR));
+            byte g = (byte)(startG + t * (endG - startG));
+            byte b = (byte)(startB + t * (endB - startB));
+
+            return (uint)((a << 24) | (r << 16) | (g << 8) | b);
+        }
+    }
+
 }

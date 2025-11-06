@@ -19,6 +19,8 @@ namespace Data_Analyzer
             //fileBytes = File.ReadAllBytes(OpenedFile.filePath);
             // TODO add immediate conversion and null fileBytest
             fileDoubleBytes = Array.ConvertAll(File.ReadAllBytes(OpenedFile.filePath), new Converter<byte, double>(Convert.ToDouble));
+
+
             initialized = true;
             GC.Collect();
             GC.WaitForPendingFinalizers();

@@ -32,9 +32,10 @@
 
         <!-- Status Bar (Bottom) -->
         <StatusBar DockPanel.Dock="Bottom">
-            <StatusBarItem Content="Ready" />
-            <StatusBarItem Content="|" />
-            <StatusBarItem Content="User: Admin" />
+            <StatusBarItem x:Name="StatusbarItem0" Content=""/>
+            <StatusBarItem x:Name="StatusbarItem1" Content="" FontWeight="Bold" />
+            <StatusBarItem x:Name="StatusbarItem2" Content="" />
+            <StatusBarItem x:Name="StatusbarItem3" Content="" />
         </StatusBar>
 
         <!-- Main Area -->

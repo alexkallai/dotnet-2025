@@ -7,6 +7,7 @@ using ScottPlot.WPF;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -47,6 +48,10 @@ namespace Data_Analyzer
                 string filePath = openFileDialog.FileName;
                 Trace.WriteLine(filePath + " opened");
                 openedFile = new OpenedFile(filePath);
+                StatusbarItem0.Content = "File: ";
+                StatusbarItem1.Content = OpenedFile.fileName;
+                StatusbarItem2.Content = $" | Length: {OpenedFile.fileDoubleBytes.Length} bytes | ";
+                StatusbarItem3.Content = "";
                 startProcessPipeline();
             }
 

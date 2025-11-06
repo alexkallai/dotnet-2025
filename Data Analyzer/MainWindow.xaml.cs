@@ -184,6 +184,22 @@ namespace Data_Analyzer
             PlotTabC.Refresh();
         }
 
+        private void HandleWrap(double[] secondArr)
+        {
+            PlotTabD.Plot.Clear();
+            try
+            {
+                PlotTabD.Plot.Remove(hilbertColorbar);
+            }
+            catch { }
+
+            var heatmapHilbert = PlotTabD.Plot.Add.Heatmap(OpenedFile.GetWrappedByteData(secondArr, PlotLeft1.Height, PlotLeft1.Width));
+            heatmapHilbert.Colormap = new ScottPlot.Colormaps.Greens();
+            hilbertColorbar = PlotTabD.Plot.Add.ColorBar(heatmapHilbert);
+            PlotTabD.Plot.Axes.AutoScale();
+            PlotTabD.Refresh();
+        }
+
 
 
         // Slider mouse up hook methods
@@ -227,8 +243,11 @@ namespace Data_Analyzer
             }
             if (Tab4.IsSelected)
             {
-
                 ShowHilbert3D(secondArr.ToArray(), 0.0);
+            }
+            if (Tab5.IsSelected)
+            {
+                HandleWrap(secondArr);
             }
         }
 

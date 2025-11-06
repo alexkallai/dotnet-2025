@@ -188,7 +188,7 @@
                 </TabItem>
 
                 <!-- New Tab -->
-                <TabItem x:Name="Tab5" Header=" ">
+                <TabItem x:Name="Tab5" Header="Wrap">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />

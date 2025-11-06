@@ -2,9 +2,11 @@
 using Microsoft.Win32;
 using OpenTK.Mathematics;
 using ScottPlot;
+using ScottPlot.Colormaps;
 using ScottPlot.Panels;
 using ScottPlot.WPF;
 using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -94,11 +96,23 @@ namespace Data_Analyzer
             var firstArr = firstRange.Span.ToArray();
             secondArr = firstArr[secondByteRangeStart..secondByteRangeEnd];
 
+            // HEX EDITOR
+            List<byte> bytes = new();
+            foreach (double d in secondArr)
+            {
+                if (d >= byte.MinValue && d <= byte.MaxValue)
+                    bytes.Add((byte)d);     // truncates decimals
+                                            // else: skip it
+            }
+            byte[] buffer = bytes.ToArray();
+            hexEditor.Stream = new MemoryStream(buffer);
+
             PlotLeft2.Plot.Clear();
             ScottPlot.Plottables.Heatmap heatMapSel2 = PlotLeft2.Plot.Add.Heatmap(OpenedFile.GetWrappedByteData(secondArr, PlotLeft2.Height, PlotLeft2.Width));
             //heatMapSel1.Colormap = usedColormap;
             RefreshPlot(PlotLeft2);
 
+            // DIGRAPH
             PlotTabA.Plot.Clear();
             try
             {
@@ -106,7 +120,6 @@ namespace Data_Analyzer
             }
             catch { }
 
-            // DIGRAPH
             var heatmap = PlotTabA.Plot.Add.Heatmap(OpenedFile.GetDigraph(secondArr.ToArray()));
             heatmap.Colormap = new ScottPlot.Colormaps.Greens();
             digraphColorbar = PlotTabA.Plot.Add.ColorBar(heatmap);

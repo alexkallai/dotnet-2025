@@ -13,6 +13,7 @@
     <PackageReference Include="Extended.Wpf.Toolkit" Version="5.0.0" />
     <PackageReference Include="HelixToolkit.Wpf" Version="2.27.3" />
     <PackageReference Include="ScottPlot.WPF" Version="5.1.57" />
+    <PackageReference Include="WPFHexaEditor" Version="2.1.7" />
   </ItemGroup>
 
 </Project>

@@ -1,19 +1,13 @@
 ﻿using HelixToolkit.Wpf;
 using Microsoft.Win32;
-using OpenTK.Mathematics;
-using ScottPlot;
-using ScottPlot.Colormaps;
 using ScottPlot.Panels;
 using ScottPlot.WPF;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Media3D;
-using static Data_Analyzer.OpenedFile;
 
 namespace Data_Analyzer
 {
@@ -185,18 +179,18 @@ namespace Data_Analyzer
         // Slider mouse up hook methods
         private void FirstRangeSlider_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            double lo = FirstRangeSlider.LowerValue;
-            double hi = FirstRangeSlider.HigherValue;
-            Trace.WriteLine($"Finished: {lo} - {hi}");
-            startProcessPipeline();
+            if (OpenedFile.initialized == true)
+            {
+                startProcessPipeline();
+            }
         }
 
         private void SecondRangeSlider_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            double lo = FirstRangeSlider.LowerValue;
-            double hi = FirstRangeSlider.HigherValue;
-            Trace.WriteLine($"Finished: {lo} - {hi}");
-            startProcessPipeline();
+            if (OpenedFile.initialized == true)
+            {
+                startProcessPipeline();
+            }
         }
 
         private void HandleDisplayedTabDiagrams()
@@ -293,5 +287,28 @@ namespace Data_Analyzer
             return System.Windows.Media.Color.FromRgb(r, g, b);
         }
 
+        private void FirstRangeSlider_HigherValueChanged(object sender, RoutedEventArgs e)
+        {
+            if (OpenedFile.initialized)
+                FirstRangeSliderMaxLabel.Text = Convert.ToString(FirstRangeSlider.HigherValue);
+        }
+
+        private void FirstRangeSlider_LowerValueChanged(object sender, RoutedEventArgs e)
+        {
+            if (OpenedFile.initialized)
+                FirstRangeSliderMinLabel.Text = Convert.ToString(FirstRangeSlider.LowerValue);
+        }
+
+        private void SecondRangeSlider_HigherValueChanged(object sender, RoutedEventArgs e)
+        {
+            if (OpenedFile.initialized)
+                SecondRangeSliderMinLabel.Text = Convert.ToString(SecondRangeSlider.HigherValue);
+        }
+
+        private void SecondRangeSlider_LowerValueChanged(object sender, RoutedEventArgs e)
+        {
+            if (OpenedFile.initialized)
+                SecondRangeSliderMaxLabel.Text = Convert.ToString(SecondRangeSlider.LowerValue);
+        }
     }
 }

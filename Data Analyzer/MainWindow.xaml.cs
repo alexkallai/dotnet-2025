@@ -146,8 +146,8 @@ namespace Data_Analyzer
             catch { }
 
             var heatmap = PlotTabA.Plot.Add.Heatmap(OpenedFile.GetDigraph(secondArr));
-            heatmap.Colormap = new ScottPlot.Colormaps.Turbo();
-            heatmap.Colormap = new SharpTurbo();
+            //heatmap.Colormap = new ScottPlot.Colormaps.Greens();
+            heatmap.Colormap = new Greens();
             digraphColorbar = PlotTabA.Plot.Add.ColorBar(heatmap);
             PlotTabA.Plot.Axes.AutoScale();
             PlotTabA.Refresh();

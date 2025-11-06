@@ -53,8 +53,8 @@ namespace Data_Analyzer
         public static double[,] GetWrappedByteData(ReadOnlyMemory<double> doubleRange, double ratioX, double ratioY)
         {
             var span = doubleRange.Span;
-            int rX = (int)ratioX;
-            int rY = (int)ratioY;
+            int rX = Math.Max( (int)ratioX, 1);
+            int rY = Math.Max((int)ratioY, 1);
 
             // reduce ratio
             int g = Gcd(rX, rY);

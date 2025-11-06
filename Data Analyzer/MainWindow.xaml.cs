@@ -192,11 +192,13 @@ namespace Data_Analyzer
                 PlotTabD.Plot.Remove(hilbertColorbar);
             }
             catch { }
-
-            var heatmapHilbert = PlotTabD.Plot.Add.Heatmap(OpenedFile.GetWrappedByteData(secondArr, PlotLeft1.Height, PlotLeft1.Width));
+            double max = HorizontalSlider.Maximum;
+            double sideOne = HorizontalSlider.Value;
+            double sideTwo = max - HorizontalSlider.Value;
+            var heatmapHilbert = PlotTabD.Plot.Add.Heatmap(OpenedFile.GetWrappedByteData(secondArr, sideOne, sideTwo));
             heatmapHilbert.Colormap = new ScottPlot.Colormaps.Greens();
             hilbertColorbar = PlotTabD.Plot.Add.ColorBar(heatmapHilbert);
-            PlotTabD.Plot.Axes.AutoScale();
+            //PlotTabD.Plot.Axes.AutoScale();
             PlotTabD.Refresh();
         }
 
@@ -347,5 +349,28 @@ namespace Data_Analyzer
             UpdateSliderLabel(SecondRangeSlider, SecondRangeSliderMinLabel, true);
         }
 
+
+        private void HorizontalSlider_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (OpenedFile.initialized == true)
+            {
+                startProcessPipeline();
+            }
+            isDragging = false;
+        }
+
+        private void HorizontalSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (OpenedFile.initialized == true && !isDragging)
+            {
+                startProcessPipeline();
+            }
+            
+        }
+        private bool isDragging = false;
+        private void HorizontalSlider_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            isDragging = true;
+        }
     }
 }

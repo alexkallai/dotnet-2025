@@ -200,7 +200,10 @@
 
                         <!-- Slider and Text Field -->
                         <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center" Margin="5">
-                            <Slider x:Name="HorizontalSlider" Minimum="0" Maximum="100" Width="200" Margin="5" />
+                            <Slider x:Name="HorizontalSlider" Minimum="1" Maximum="1000" Value="500" Width="600" Margin="5" 
+                                    PreviewMouseLeftButtonUp="HorizontalSlider_PreviewMouseLeftButtonUp"
+                                    PreviewMouseLeftButtonDown="HorizontalSlider_PreviewMouseLeftButtonDown"
+                                    ValueChanged="HorizontalSlider_ValueChanged"/>
                             <TextBox x:Name="SliderValueTextBox" Width="50" Margin="5" TextAlignment="Center" />
                         </StackPanel>
                     </Grid>

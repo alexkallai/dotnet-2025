@@ -96,11 +96,20 @@ namespace Data_Analyzer
             RefreshPlot(PlotLeft1);
         }
 
+        // Abstracted function to read range slider values
+        private (double invLow, double invHigh) GetSliderValues(Xceed.Wpf.Toolkit.RangeSlider slider)
+        {
+            double max = slider.Maximum;
+            double invLow = (max - slider.HigherValue) / max;
+            double invHigh = (max - slider.LowerValue) / max;
+            return (invLow, invHigh);
+        }
+
+        // Updated GetSecondRange function
         private double[] GetSecondRange(Memory<double> firstRange)
         {
-            double max2 = SecondRangeSlider.Maximum;
-            double invLow2 = (max2 - SecondRangeSlider.HigherValue) / max2;
-            double invHigh2 = (max2 - SecondRangeSlider.LowerValue) / max2;
+            // Use the abstracted function to get slider values
+            var (invLow2, invHigh2) = GetSliderValues(SecondRangeSlider);
 
             int secondByteRangeStart = (int)(firstRange.Length * invLow2);
             int secondByteRangeEnd = (int)(firstRange.Length * invHigh2);
@@ -108,6 +117,7 @@ namespace Data_Analyzer
             var firstArr = firstRange.Span.ToArray();
             return firstArr[secondByteRangeStart..secondByteRangeEnd];
         }
+
 
         private void RefreshPlotLeft2(double[] secondArr)
         {
@@ -287,28 +297,36 @@ namespace Data_Analyzer
             return System.Windows.Media.Color.FromRgb(r, g, b);
         }
 
-        private void FirstRangeSlider_HigherValueChanged(object sender, RoutedEventArgs e)
+        // Refactored code using GetSliderValues
+        private void UpdateSliderLabel(Xceed.Wpf.Toolkit.RangeSlider slider, TextBlock label, bool isHigherValue)
         {
             if (OpenedFile.initialized)
-                FirstRangeSliderMaxLabel.Text = Convert.ToString(FirstRangeSlider.HigherValue);
+            {
+                // Use GetSliderValues to calculate the slider values
+                var (invLow, invHigh) = GetSliderValues(slider);
+                label.Text = Convert.ToString(isHigherValue ? Convert.ToInt32(invHigh * OpenedFile.fileDoubleBytes.Length) : Convert.ToInt32(invLow * OpenedFile.fileDoubleBytes.Length));
+            }
+        }
+
+        private void FirstRangeSlider_HigherValueChanged(object sender, RoutedEventArgs e)
+        {
+            UpdateSliderLabel(FirstRangeSlider, FirstRangeSliderMaxLabel, false);
         }
 
         private void FirstRangeSlider_LowerValueChanged(object sender, RoutedEventArgs e)
         {
-            if (OpenedFile.initialized)
-                FirstRangeSliderMinLabel.Text = Convert.ToString(FirstRangeSlider.LowerValue);
+            UpdateSliderLabel(FirstRangeSlider, FirstRangeSliderMinLabel, true);
         }
 
         private void SecondRangeSlider_HigherValueChanged(object sender, RoutedEventArgs e)
         {
-            if (OpenedFile.initialized)
-                SecondRangeSliderMinLabel.Text = Convert.ToString(SecondRangeSlider.HigherValue);
+            UpdateSliderLabel(SecondRangeSlider, SecondRangeSliderMaxLabel, false);
         }
 
         private void SecondRangeSlider_LowerValueChanged(object sender, RoutedEventArgs e)
         {
-            if (OpenedFile.initialized)
-                SecondRangeSliderMaxLabel.Text = Convert.ToString(SecondRangeSlider.LowerValue);
+            UpdateSliderLabel(SecondRangeSlider, SecondRangeSliderMinLabel, true);
         }
+
     }
 }

@@ -109,7 +109,7 @@
                     <ScottPlot:WpfPlot x:Name="PlotTabB" />
                 </TabItem>
                 <TabItem x:Name="Tab3" Header="Hilbert 2D">
-                    <ScottPlot:WpfPlot x:Name="PlotTabD" />
+                    <ScottPlot:WpfPlot x:Name="PlotTabC" />
                 </TabItem>
                 <TabItem x:Name="Tab4" Header="Hilbert 3D">
                     <Grid>

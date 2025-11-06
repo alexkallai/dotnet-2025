@@ -122,6 +122,14 @@ namespace Data_Analyzer
             hist.AddRange(secondArr);
             PlotTabB.Plot.Axes.AutoScale();
             PlotTabB.Refresh();
+
+            // 2D Hilbert
+
+            var heatmapHilbert = PlotTabC.Plot.Add.Heatmap(HilbertArray.To2D(secondArr.ToArray(), 0.0));
+            heatmapHilbert.Colormap = new ScottPlot.Colormaps.Greens();
+            digraphColorbar = PlotTabC.Plot.Add.ColorBar(heatmapHilbert);
+            PlotTabC.Plot.Axes.AutoScale();
+            PlotTabC.Refresh();
         }
 
 

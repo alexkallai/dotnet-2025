@@ -20,6 +20,8 @@ namespace Data_Analyzer
             // TODO add immediate conversion and null fileBytest
             fileDoubleBytes = Array.ConvertAll(File.ReadAllBytes(OpenedFile.filePath), new Converter<byte, double>(Convert.ToDouble));
             initialized = true;
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
         }
 
         public static double[,] GetDigraph(ReadOnlyMemory<double> range)

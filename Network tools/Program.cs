@@ -7,10 +7,11 @@ using static Network_tools.NetworkTools;
 class Program
 {
     static Stack<Action> menuStack = new Stack<Action>();
-    static NetworkTools networkTools = new NetworkTools();
+    static int selectionIndex;
 
     static void Main(string[] args)
     {
+        NetworkTools.EnumerateInterfaces();
         // Start with the main menu
         menuStack.Push(MainMenu);
         menuStack.Peek().Invoke(); // Display the top menu
@@ -84,7 +85,10 @@ class Program
             .Title("Found interfaces:")
             .AddChoices(names));
         // Add logic to list network interfaces
-        Console.ReadKey();
+        selectionIndex = names.IndexOf(selection);
+        menuStack.Push(ScanActiveIpsInRange);
+        menuStack.Peek().Invoke(); // Navigate to Network Scan menu
+        Console.Clear();
     }
 
     static void ScanActiveInterfaces()
@@ -93,5 +97,38 @@ class Program
         AnsiConsole.MarkupLine("[bold green]Scanning active network interfaces...[/]");
         // Add logic to scan active interfaces
         Console.ReadKey();
+    }
+
+    static void ScanActiveIpsInRange()
+    {
+        Console.Clear();
+        AnsiConsole.MarkupLine("[bold green]Scanning active IP addresses...[/]");
+        var interfaceData = NetworkTools.interfaces[selectionIndex];
+        string IPBase = interfaceData.IP.Split('.')[0..2].ToString();
+
+
+        var table = new Table().Centered();
+
+        AnsiConsole.Live(table)
+            .Start(ctx =>
+            {
+                table.AddColumn("Active IP addresses");
+                for(int i = 0; i < 257;  i++) {
+                    string currentIP = $"{IPBase}.{i}";
+                    if (NetworkTools.IsHostUp(currentIP))
+                    {
+                        table.AddRow(currentIP);
+                        ctx.Refresh();
+                    }
+
+                }
+
+
+            });
+
+
+        Console.ReadKey();
+        Console.Clear();
+
     }
 }

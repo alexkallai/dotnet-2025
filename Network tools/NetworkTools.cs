@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Network_tools
 {
-    public class NetworkTools
+    public static class NetworkTools
     {
         public static List<InterFace> interfaces = new List<InterFace>();
         public struct InterFace
@@ -17,11 +17,9 @@ namespace Network_tools
             public string subnetMask;
             public string[] defaultGateway;
         }
-        public NetworkTools() {
-            EnumerateInterfaces();
-        }
 
-        public void EnumerateInterfaces()
+
+        public static void EnumerateInterfaces()
         {
 
             foreach (NetworkInterface networkInterface in NetworkInterface.GetAllNetworkInterfaces())
@@ -58,6 +56,25 @@ namespace Network_tools
                 interfaces.Add(interFace);
             }
             }
+
+
+
+        public static bool IsHostUp(string ipAddress)
+        {
+            try
+            {
+                using (Ping ping = new Ping())
+                {
+                    PingReply reply = ping.Send(ipAddress, 1000); // Timeout set to 1000ms
+                    return reply.Status == IPStatus.Success;
+                }
+            }
+            catch (PingException)
+            {
+                return false; // Host is down or unreachable
+            }
         }
+    }
+
 
 }

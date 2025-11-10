@@ -57,23 +57,53 @@ namespace Network_tools
             }
             }
 
-
-
-        public static bool IsHostUp(string ipAddress)
+        public static bool IsIpAddressLive(string ipAddress)
         {
             try
             {
-                using (Ping ping = new Ping())
+                // Get the ARP table
+                var arpTable = GetArpTable();
+
+                // Check if the IP address exists in the ARP table
+                foreach (var entry in arpTable)
                 {
-                    PingReply reply = ping.Send(ipAddress, 1000); // Timeout set to 1000ms
-                    return reply.Status == IPStatus.Success;
+                    if (entry.Contains(ipAddress))
+                    {
+                        return true; // IP address is live
+                    }
                 }
             }
-            catch (PingException)
+            catch (Exception ex)
             {
-                return false; // Host is down or unreachable
+                Console.WriteLine($"Error: {ex.Message}");
             }
+
+            return false; // IP address is not live
         }
+
+        private static string[] GetArpTable()
+        {
+            // Run the "arp -a" command to get the ARP table
+            var process = new System.Diagnostics.Process
+            {
+                StartInfo = new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = "arp",
+                    Arguments = "-a",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+
+            process.Start();
+            string output = process.StandardOutput.ReadToEnd();
+            process.WaitForExit();
+
+            // Split the output into lines
+            return output.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+        }
+
     }
 
 

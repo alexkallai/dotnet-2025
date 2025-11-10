@@ -2,6 +2,7 @@
 using Spectre.Console;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using static Network_tools.NetworkTools;
 
 class Program
@@ -104,7 +105,7 @@ class Program
         Console.Clear();
         AnsiConsole.MarkupLine("[bold green]Scanning active IP addresses...[/]");
         var interfaceData = NetworkTools.interfaces[selectionIndex];
-        string IPBase = interfaceData.IP.Split('.')[0..2].ToString();
+        string IPBase = string.Join(".", interfaceData.IP.Split('.').Take(3));
 
 
         var table = new Table().Centered();
@@ -115,7 +116,7 @@ class Program
                 table.AddColumn("Active IP addresses");
                 for(int i = 0; i < 257;  i++) {
                     string currentIP = $"{IPBase}.{i}";
-                    if (NetworkTools.IsHostUp(currentIP))
+                    if (NetworkTools.IsIpAddressLive(currentIP))
                     {
                         table.AddRow(currentIP);
                         ctx.Refresh();

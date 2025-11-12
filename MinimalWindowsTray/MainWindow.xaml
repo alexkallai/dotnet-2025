@@ -5,8 +5,82 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MinimalWindowsTray"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" 
+        Background="Transparent"
+        Height="600"
+        Width="800"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        AllowsTransparency="True"
+        WindowStyle="None"
+        WindowState="Maximized"
+        WindowStartupLocation="Manual"
+        Visibility="Visible"
+        >
     <Grid>
+        <!-- Main Content -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" /> <!-- Main content area -->
+            <RowDefinition Height="{Binding BottomGridHeight}" /> <!-- Parametrically settable height -->
+        </Grid.RowDefinitions>
 
+        <!-- Bottom Grid -->
+        <Grid Grid.Row="1" Background="#F0F0F0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" /> <!-- Fixed square button -->
+                <ColumnDefinition Width="*" /> <!-- Dynamically changeable list of square icons -->
+                <ColumnDefinition Width="Auto" /> <!-- Dynamically changeable list of small square icons -->
+                <ColumnDefinition Width="Auto" /> <!-- Normal button with icons -->
+                <ColumnDefinition Width="Auto" /> <!-- Text field -->
+            </Grid.ColumnDefinitions>
+
+            <!-- Fixed Square Button -->
+            <Button Width="50" Height="50" Content="☰" HorizontalAlignment="Left" VerticalAlignment="Center" />
+
+            <!-- Dynamically Changeable List of Square Icons -->
+            <ItemsControl Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,10,0">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Width="50" Height="50">
+                            <Image Source="{Binding IconSource}" Stretch="Uniform" />
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <!-- Dynamically Changeable List of Small Square Icons -->
+            <ItemsControl Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="10,0,10,0">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Width="30" Height="30">
+                            <Image Source="{Binding SmallIconSource}" Stretch="Uniform" />
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <!-- Normal Button with Icons -->
+            <Button Grid.Column="3" Width="100" Height="50" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="icon.png" Width="20" Height="20" Margin="5,0,5,0" />
+                    <TextBlock Text="Action" VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
+
+            <!-- Text Field -->
+            <TextBlock Grid.Column="4" Width="150" Height="50" Text="{Binding CurrentTime}" 
+                       HorizontalAlignment="Right" VerticalAlignment="Center" 
+                       TextAlignment="Center" FontSize="16" FontWeight="Bold" />
+        </Grid>
     </Grid>
 </Window>

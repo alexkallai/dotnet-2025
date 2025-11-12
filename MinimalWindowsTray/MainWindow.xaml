@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:MinimalWindowsTray"
         mc:Ignorable="d"
         Title="MainWindow" 
+        Topmost="True"
         Background="Transparent"
         Height="600"
         Width="800"

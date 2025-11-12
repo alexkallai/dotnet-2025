@@ -964,6 +964,10 @@ Object-Oriented Programming (OOP) in C# revolves around defining classes, object
 
 - **Edge Case**: Overuse of `sealed` can limit extensibility.
 
+- **Sealed methods can only be used for virtual overridden methods**
+- **Static classes** are implicitly sealed
+- **Overriding static methods** is NOT possible
+
 #### **`base`**
 
 - **Description**: Refers to the base class of the current class.
@@ -1762,6 +1766,13 @@ Modifiers in C# are used to alter the behaviour of declarations, such as variabl
 <br>
 <br>
 
+---
+
+---
+
+# Manual notes
+
+
 # String interpolation
   ```csharp
     int a = 2;
@@ -1796,4 +1807,52 @@ Modifiers in C# are used to alter the behaviour of declarations, such as variabl
     var height = letters.GetLength(0);
     var width = letters.GetLength(1);
 
+  ```
+
+
+# foreach loop
+
+  ```csharp
+    // 
+    var words = new [] {"one", "two", "three", "four"};
+
+    foreach (var word in words){
+        Console.WriteLine(word);
+    }
+  ```
+
+# Lists
+    List is a collection of elements whos size is not fixed
+  ```csharp
+    List<string> words = new List<string>();
+    Console.WriteLine("Count of elements is " + words.Count);
+
+    words.Add("hello");
+    words.Remove("hello");
+
+  ```
+
+  # out keyword
+
+  ```csharp
+    int nonPositiveCount;
+    var onlyPositive = GetOnlyPositive(numbers, out nonPositiveCount);
+
+
+    List<int> GetOnlyPositive(int[] numbers, out int countOfNonPositive){
+        var result = new List<int>;
+        countOfNonPositive = 0;
+
+        foreach(int number in numbers){
+            if(number > 0)
+            {
+                result.Add(number)
+            }
+            else
+            {
+                countOfNonPositive++;
+            }
+        }
+        return result;
+    }
   ```

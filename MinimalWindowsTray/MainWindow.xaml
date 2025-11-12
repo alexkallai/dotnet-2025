@@ -18,7 +18,15 @@
         WindowStartupLocation="Manual"
         Visibility="Visible"
         >
-    <Grid>
+    
+    <Window.Resources>
+        <Style x:Key="VisibleGridRowStyle" TargetType="Grid">
+            <Setter Property="Background" Value="Wheat" />
+        </Style>
+    </Window.Resources>
+
+
+    <Grid >
         <!-- Main Content -->
         <Grid.RowDefinitions>
             <RowDefinition Height="*" /> <!-- Main content area -->
@@ -26,7 +34,7 @@
         </Grid.RowDefinitions>
 
         <!-- Bottom Grid -->
-        <Grid Grid.Row="1" Background="#F0F0F0">
+        <Grid Grid.Row="1" Style="{StaticResource VisibleGridRowStyle}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" /> <!-- Fixed square button -->
                 <ColumnDefinition Width="*" /> <!-- Dynamically changeable list of square icons -->
@@ -36,7 +44,7 @@
             </Grid.ColumnDefinitions>
 
             <!-- Fixed Square Button -->
-            <Button Width="50" Height="50" Content="☰" HorizontalAlignment="Left" VerticalAlignment="Center" />
+            <Button Width="50" Height="50" Content="STARTBUTTON" HorizontalAlignment="Left" VerticalAlignment="Center" />
 
             <!-- Dynamically Changeable List of Square Icons -->
             <ItemsControl Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,10,0">

@@ -7,6 +7,8 @@ class Program
     static Stack<Action> menuStack = new Stack<Action>();
     static int selectionIndex;
 
+    public static string selectedIpForPortscan = "";
+
     static void Main(string[] args)
     {
         NetworkTools.EnumerateInterfaces();
@@ -75,7 +77,6 @@ class Program
         AnsiConsole.MarkupLine("[bold red]Feature coming soon![/]");
         Console.ReadKey();
         Console.Clear();
-        //menuStack.Pop();
     }
 
     static void ListNetworkInterfaces()
@@ -139,6 +140,50 @@ class Program
             .Title("Found interfaces:")
             .PageSize(50)
             .AddChoices(liveIpAddresses));
+
+        selectedIpForPortscan = selection;
+
+        menuStack.Push(ScanPortsForIp);
+        menuStack.Peek().Invoke(); 
+
+        Console.Clear();
+
+    }
+
+    static void ScanPortsForIp()
+    {
+        const int MAX_PORT_NUMBER = 65535;
+        Console.Clear();
+        AnsiConsole.MarkupLine($"[bold green]Scanning active ports for IP {selectedIpForPortscan}: ...[/]");
+
+        List<string> openPorts = [];
+
+
+        var table = new Table().Centered();
+
+        AnsiConsole.Live(table)
+            .Start(ctx =>
+            {
+                table.AddColumn("Active ports:");
+                for (int i = 0; i < MAX_PORT_NUMBER; i++)
+                {
+                    if (NetworkTools.IsPortOpen(selectedIpForPortscan, i, 20))
+                    {
+                        table.AddRow(i.ToString());
+                        openPorts.Add(i.ToString());
+                        ctx.Refresh();
+                    }
+                }
+
+
+            });
+
+        Console.Clear();
+        var selection = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+            .Title("Found open ports:")
+            .PageSize(50)
+            .AddChoices(openPorts));
 
 
         Console.Clear();

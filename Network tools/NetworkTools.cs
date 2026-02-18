@@ -1,4 +1,5 @@
 ﻿using System.Net.NetworkInformation;
+using System.Net.Sockets;
 
 namespace Network_tools
 {
@@ -99,6 +100,27 @@ namespace Network_tools
             return output.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
         }
 
+        // Synchronous version
+        public static bool IsPortOpen(string ipAddress, int port, int timeoutMs = 2000)
+        {
+            using var client = new TcpClient();
+
+            try
+            {
+                var result = client.BeginConnect(ipAddress, port, null, null);
+                bool success = result.AsyncWaitHandle.WaitOne(TimeSpan.FromMilliseconds(timeoutMs));
+
+                if (!success)
+                    return false; // timeout
+
+                client.EndConnect(result);
+                return true; // connected
+            }
+            catch
+            {
+                return false; // any error => treat as closed/unreachable
+            }
+        }
     }
 
 

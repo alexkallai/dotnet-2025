@@ -1,34 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Net.NetworkInformation;
 
 namespace Network_tools
 {
     public static class NetworkTools
     {
-        public static List<InterFace> interfaces = new List<InterFace>();
-        public struct InterFace
+        public static List<NetworkInterface> interfaces = new List<NetworkInterface>();
+        public static string[] arpTable = GetArpTable();
+        public struct NetworkInterface
         {
             public string Name;
             public string IP;
             public string subnetMask;
-            public string[] defaultGateway;
+            public List<string> defaultGateway;
         }
 
 
         public static void EnumerateInterfaces()
         {
 
-            foreach (NetworkInterface networkInterface in NetworkInterface.GetAllNetworkInterfaces())
+            foreach (System.Net.NetworkInformation.NetworkInterface networkInterface in System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces())
             {
-                InterFace interFace = new InterFace();
+                NetworkInterface interFace = new NetworkInterface() { defaultGateway = [] };
                 // Filter for operational network interfaces
                 if (networkInterface.OperationalStatus == OperationalStatus.Up)
                 {
-                    Console.WriteLine($"Interface: {networkInterface.Name}");
+                    // Console.WriteLine($"Interface: {networkInterface.Name}");
                     IPInterfaceProperties properties = networkInterface.GetIPProperties();
 
                     // Get IP addresses
@@ -36,8 +32,8 @@ namespace Network_tools
                     {
                         if (ip.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
                         {
-                            Console.WriteLine($"  IP Address: {ip.Address}");
-                            Console.WriteLine($"  Subnet Mask: {ip.IPv4Mask}");
+                            // Console.WriteLine($"  IP Address: {ip.Address}");
+                            // Console.WriteLine($"  Subnet Mask: {ip.IPv4Mask}");
                             interFace.Name = networkInterface.Name;
                             interFace.IP = ip.Address.ToString();
                             interFace.subnetMask = ip.IPv4Mask.ToString();
@@ -48,21 +44,20 @@ namespace Network_tools
                     foreach (GatewayIPAddressInformation gateway in properties.GatewayAddresses)
                     {
                         Console.WriteLine($"  Default Gateway: {gateway.Address}");
-                        
+                        interFace.defaultGateway.Append( gateway.Address.ToString() );
+
                     }
 
                     Console.WriteLine();
                 }
                 interfaces.Add(interFace);
             }
-            }
+        }
 
         public static bool IsIpAddressLive(string ipAddress)
         {
             try
             {
-                // Get the ARP table
-                var arpTable = GetArpTable();
 
                 // Check if the IP address exists in the ARP table
                 foreach (var entry in arpTable)

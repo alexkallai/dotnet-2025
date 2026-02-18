@@ -1,8 +1,5 @@
 ﻿using Network_tools;
 using Spectre.Console;
-using System;
-using System.Collections.Generic;
-using System.Net;
 using static Network_tools.NetworkTools;
 
 class Program
@@ -20,26 +17,29 @@ class Program
 
     static void MainMenu()
     {
-        Console.Clear();
-        var feature = AnsiConsole.Prompt(
-            new SelectionPrompt<string>()
-                .Title("[bold yellow]Select a feature:[/]")
-                .AddChoices(new[] { "Network Scan", "Coming up", "Exit" })
-        );
-
-        switch (feature)
+        while (true)
         {
-            case "Network Scan":
-                menuStack.Push(NetworkScanMenu);
-                menuStack.Peek().Invoke(); // Navigate to Network Scan menu
-                break;
-            case "Coming up...":
-                HandleComingUp();
-                menuStack.Peek().Invoke(); // Stay in the main menu
-                break;
-            case "Exit":
-                Environment.Exit(0); // Exit the application
-                break;
+            Console.Clear();
+            var feature = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .Title("[bold yellow]Select a feature:[/]")
+                    .AddChoices(new[] { "Network Scan", "Coming up", "Exit" })
+            );
+
+            switch (feature)
+            {
+                case "Network Scan":
+                    menuStack.Push(NetworkScanMenu);
+                    menuStack.Peek().Invoke(); // Navigate to Network Scan menu
+                    break;
+                case "Coming up":
+                    menuStack.Push(HandleComingUp);
+                    menuStack.Peek().Invoke(); // Stay in the main menu
+                    break;
+                case "Exit":
+                    Environment.Exit(0); // Exit the application
+                    break;
+            }
         }
     }
 
@@ -74,6 +74,8 @@ class Program
         Console.Clear();
         AnsiConsole.MarkupLine("[bold red]Feature coming soon![/]");
         Console.ReadKey();
+        Console.Clear();
+        //menuStack.Pop();
     }
 
     static void ListNetworkInterfaces()
@@ -107,6 +109,8 @@ class Program
         var interfaceData = NetworkTools.interfaces[selectionIndex];
         string IPBase = string.Join(".", interfaceData.IP.Split('.').Take(3));
 
+        List<string> liveIpAddresses = [];
+
 
         var table = new Table().Centered();
 
@@ -114,11 +118,13 @@ class Program
             .Start(ctx =>
             {
                 table.AddColumn("Active IP addresses");
-                for(int i = 0; i < 257;  i++) {
+                for (int i = 0; i < 257; i++)
+                {
                     string currentIP = $"{IPBase}.{i}";
                     if (NetworkTools.IsIpAddressLive(currentIP))
                     {
                         table.AddRow(currentIP);
+                        liveIpAddresses.Add(currentIP);
                         ctx.Refresh();
                     }
 
@@ -127,8 +133,14 @@ class Program
 
             });
 
+        Console.Clear();
+        var selection = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+            .Title("Found interfaces:")
+            .PageSize(50)
+            .AddChoices(liveIpAddresses));
 
-        Console.ReadKey();
+
         Console.Clear();
 
     }

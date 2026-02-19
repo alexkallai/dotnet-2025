@@ -25,7 +25,7 @@ class Program
             var feature = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                     .Title("[bold yellow]Select a feature:[/]")
-                    .AddChoices(new[] { "Network Scan", "Coming up", "Exit" })
+                    .AddChoices(new[] { "Network Scan", "Exit" })
             );
 
             switch (feature)
@@ -33,10 +33,6 @@ class Program
                 case "Network Scan":
                     menuStack.Push(NetworkScanMenu);
                     menuStack.Peek().Invoke(); // Navigate to Network Scan menu
-                    break;
-                case "Coming up":
-                    menuStack.Push(HandleComingUp);
-                    menuStack.Peek().Invoke(); // Stay in the main menu
                     break;
                 case "Exit":
                     Environment.Exit(0); // Exit the application
@@ -51,17 +47,13 @@ class Program
         var option = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
                 .Title("[bold green]Select a network scan option:[/]")
-                .AddChoices(new[] { "List Network Interfaces", "Scan Active Interfaces", "Back" })
+                .AddChoices(new[] { "List Network Interfaces", "Back" })
         );
 
         switch (option)
         {
             case "List Network Interfaces":
                 ListNetworkInterfaces();
-                menuStack.Peek().Invoke(); // Stay in the current menu
-                break;
-            case "Scan Active Interfaces":
-                ScanActiveInterfaces();
                 menuStack.Peek().Invoke(); // Stay in the current menu
                 break;
             case "Back":
@@ -71,23 +63,25 @@ class Program
         }
     }
 
-    static void HandleComingUp()
-    {
-        Console.Clear();
-        AnsiConsole.MarkupLine("[bold red]Feature coming soon![/]");
-        Console.ReadKey();
-        Console.Clear();
-    }
 
     static void ListNetworkInterfaces()
     {
-        var names = interfaces.Select(iface => $"{iface.IP}, \t\t {iface.Name}").ToList();
+        var names = interfaces.Select(iface => $"{iface.IP.PadRight(15)} - {iface.Name}").ToList();
+        names.Add("Back");
+
         Console.Clear();
         AnsiConsole.MarkupLine("[bold yellow]Listing all network interfaces...[/]");
         var selection = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
             .Title("Found interfaces:")
             .AddChoices(names));
+
+        if (selection == "Back")
+        {
+            menuStack.Pop();
+            menuStack.Peek().Invoke(); // Go back to the previous menu
+        }
+
         // Add logic to list network interfaces
         selectionIndex = names.IndexOf(selection);
         menuStack.Push(ScanActiveIpsInRange);
@@ -95,13 +89,6 @@ class Program
         Console.Clear();
     }
 
-    static void ScanActiveInterfaces()
-    {
-        Console.Clear();
-        AnsiConsole.MarkupLine("[bold green]Scanning active network interfaces...[/]");
-        // Add logic to scan active interfaces
-        Console.ReadKey();
-    }
 
     static void ScanActiveIpsInRange()
     {
@@ -113,7 +100,7 @@ class Program
         List<string> liveIpAddresses = [];
 
 
-        var table = new Table().Centered();
+        var table = new Table().LeftAligned().Width(40);
 
         AnsiConsole.Live(table)
             .Start(ctx =>
@@ -134,12 +121,20 @@ class Program
 
             });
 
+        liveIpAddresses.Add("Back");
         Console.Clear();
         var selection = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
-            .Title("Found interfaces:")
+            .Title("Found active IP addresses:")
             .PageSize(50)
             .AddChoices(liveIpAddresses));
+
+
+        if (selection == "Back")
+        {
+            menuStack.Pop();
+            menuStack.Peek().Invoke(); // Go back to the previous menu
+        }
 
         selectedIpForPortscan = selection;
 
@@ -152,41 +147,66 @@ class Program
 
     static void ScanPortsForIp()
     {
+        var cts = new CancellationTokenSource();
+
+        // Start a new Task to listen for a key press  
+        // This task will run in the background without blocking the main UI thread  
+        Task.Run(() =>
+        {
+            Console.ReadKey(true); // Read a key, 'true' means don't display it  
+            cts.Cancel(); // Signal cancellation once a key is pressed  
+        });
+
         const int MAX_PORT_NUMBER = 65535;
         Console.Clear();
-        AnsiConsole.MarkupLine($"[bold green]Scanning active ports for IP {selectedIpForPortscan}: ...[/]");
+        AnsiConsole.MarkupLine($"[bold green]Scanning active ports for IP {selectedIpForPortscan}[/]");
+        AnsiConsole.MarkupLine($"Press a button to stop the scan...");
+
 
         List<string> openPorts = [];
 
 
-        var table = new Table().Centered();
+        var table = new Table().LeftAligned().Width(40);
 
+        int i = 0;
         AnsiConsole.Live(table)
             .Start(ctx =>
             {
                 table.AddColumn("Active ports:");
-                for (int i = 0; i < MAX_PORT_NUMBER; i++)
+                for (i=0; i < MAX_PORT_NUMBER; i++)
                 {
+
+                    if (cts.Token.IsCancellationRequested)
+                    {
+                        AnsiConsole.MarkupLine("\n[yellow]Scanning stopped by user.[/]");
+                        break; // Exit the loop
+                    }
+
+                    table.Title($"Scanning {i}/{MAX_PORT_NUMBER}");
                     if (NetworkTools.IsPortOpen(selectedIpForPortscan, i, 20))
                     {
                         table.AddRow(i.ToString());
                         openPorts.Add(i.ToString());
-                        ctx.Refresh();
                     }
+                    ctx.Refresh();
                 }
-
-
             });
 
         Console.Clear();
-        var selection = AnsiConsole.Prompt(
-            new SelectionPrompt<string>()
-            .Title("Found open ports:")
-            .PageSize(50)
-            .AddChoices(openPorts));
+        if(openPorts.Count != 0)
+        {
+            var selection = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                .Title($"Found open ports in the range 0-{i}:")
+                .PageSize(50)
+                .AddChoices(openPorts));
+        }
 
 
         Console.Clear();
+        menuStack.Pop(); // Remove current menu from stack
+        menuStack.Pop(); // Remove current menu from stack
+        menuStack.Peek().Invoke();
 
     }
 }

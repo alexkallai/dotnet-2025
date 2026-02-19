@@ -5,7 +5,7 @@ namespace Network_tools
 {
     public static class NetworkTools
     {
-        public static List<NetworkInterface> interfaces = new List<NetworkInterface>();
+        public static List<NetworkInterface> Interfaces = new List<NetworkInterface>();
         public static string[] arpTable = GetArpTable();
         public struct NetworkInterface
         {
@@ -51,7 +51,7 @@ namespace Network_tools
 
                     Console.WriteLine();
                 }
-                interfaces.Add(interFace);
+                Interfaces.Add(interFace);
             }
         }
 

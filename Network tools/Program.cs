@@ -2,211 +2,253 @@
 using Spectre.Console;
 using static Network_tools.NetworkTools;
 
-class Program
+internal static class Program
 {
-    static Stack<Action> menuStack = new Stack<Action>();
-    static int selectionIndex;
+    // A stack to manage menu navigation. Each Action represents a menu screen.
+    private static readonly Stack<Action> _menuStack = new Stack<Action>();
 
-    public static string selectedIpForPortscan = "";
+    // --- State variables shared between menu actions ---
+    // These are used to pass data between different menu screens.
+    private static int _selectedInterfaceIndex;
+    private static string _selectedIpForPortScan = "";
+    private const string BackChoice = "[grey]Back[/]";
 
-    static void Main(string[] args)
+    /// <summary>
+    /// The main entry point for the application.
+    /// </summary>
+    public static void Main(string[] args)
     {
+        // Populate network interface data at startup.
         NetworkTools.EnumerateInterfaces();
-        // Start with the main menu
-        menuStack.Push(MainMenu);
-        menuStack.Peek().Invoke(); // Display the top menu
+
+        // Set the initial menu and start the application loop.
+        _menuStack.Push(ShowMainMenu);
+        _menuStack.Peek().Invoke(); // Display the top-most menu.
     }
 
-    static void MainMenu()
-    {
-        while (true)
-        {
-            Console.Clear();
-            var feature = AnsiConsole.Prompt(
-                new SelectionPrompt<string>()
-                    .Title("[bold yellow]Select a feature:[/]")
-                    .AddChoices(new[] { "Network Scan", "Exit" })
-            );
+    #region Menu Methods
 
-            switch (feature)
-            {
-                case "Network Scan":
-                    menuStack.Push(NetworkScanMenu);
-                    menuStack.Peek().Invoke(); // Navigate to Network Scan menu
-                    break;
-                case "Exit":
-                    Environment.Exit(0); // Exit the application
-                    break;
-            }
+    /// <summary>
+    /// Displays the main menu.
+    /// </summary>
+    private static void ShowMainMenu()
+    {
+        Console.Clear();
+        var feature = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title("[bold yellow]Select a feature:[/]")
+                .AddChoices("Network Scan", "Exit"));
+
+        switch (feature)
+        {
+            case "Network Scan":
+                _menuStack.Push(ShowNetworkScanMenu);
+                _menuStack.Peek().Invoke(); // Navigate to the Network Scan menu.
+                break;
+            case "Exit":
+                Environment.Exit(0); // Exit the application.
+                break;
         }
     }
 
-    static void NetworkScanMenu()
+    /// <summary>
+    /// Displays the network scanning options menu.
+    /// </summary>
+    private static void ShowNetworkScanMenu()
     {
         Console.Clear();
         var option = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
                 .Title("[bold green]Select a network scan option:[/]")
-                .AddChoices(new[] { "List Network Interfaces", "Back" })
-        );
+                .AddChoices("List Network Interfaces", BackChoice));
 
         switch (option)
         {
             case "List Network Interfaces":
-                ListNetworkInterfaces();
-                menuStack.Peek().Invoke(); // Stay in the current menu
+                // This is a direct method call, not a new menu on the stack.
+                // It will handle its own subsequent navigation.
+                SelectNetworkInterface();
                 break;
-            case "Back":
-                menuStack.Pop(); // Remove current menu from stack
-                menuStack.Peek().Invoke(); // Go back to the previous menu
+            case BackChoice:
+                _menuStack.Pop(); // Remove current menu from the stack.
+                _menuStack.Peek().Invoke(); // Go back to the previous menu.
                 break;
         }
     }
 
-
-    static void ListNetworkInterfaces()
+    /// <summary>
+    /// Displays a list of network interfaces for the user to select for scanning.
+    /// </summary>
+    private static void SelectNetworkInterface()
     {
-        var names = interfaces.Select(iface => $"{iface.IP.PadRight(15)} - {iface.Name}").ToList();
-        names.Add("Back");
-
         Console.Clear();
         AnsiConsole.MarkupLine("[bold yellow]Listing all network interfaces...[/]");
+
+        // Format choices for better alignment.
+        var interfaceChoices = NetworkTools.Interfaces
+            .Select(iface => $"[white]{iface.IP.PadRight(18)}[/] - [dim]{iface.Name}[/]")
+            .ToList();
+
+        interfaceChoices.Add(BackChoice);
+
         var selection = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
-            .Title("Found interfaces:")
-            .AddChoices(names));
+                .Title("Select an interface to scan:")
+                .AddChoices(interfaceChoices));
 
-        if (selection == "Back")
+        if (selection == BackChoice)
         {
-            menuStack.Pop();
-            menuStack.Peek().Invoke(); // Go back to the previous menu
+            // If "Back" is chosen, simply return to the calling menu.
+            // The ShowNetworkScanMenu will be invoked again by the caller's logic if needed.
+            // In this specific stack-based model, we must re-invoke the previous menu.
+            _menuStack.Peek().Invoke();
         }
+        else
+        {
+            // Find the index of the selected interface to pass to the next step.
+            _selectedInterfaceIndex = interfaceChoices.IndexOf(selection);
 
-        // Add logic to list network interfaces
-        selectionIndex = names.IndexOf(selection);
-        menuStack.Push(ScanActiveIpsInRange);
-        menuStack.Peek().Invoke(); // Navigate to Network Scan menu
-        Console.Clear();
+            // Navigate to the next step: scanning for active IPs.
+            _menuStack.Push(ScanForActiveIps);
+            _menuStack.Peek().Invoke();
+        }
     }
 
-
-    static void ScanActiveIpsInRange()
+    /// <summary>
+    /// Scans the subnet of the selected interface for live IP addresses.
+    /// </summary>
+    private static void ScanForActiveIps()
     {
         Console.Clear();
-        AnsiConsole.MarkupLine("[bold green]Scanning active IP addresses...[/]");
-        var interfaceData = NetworkTools.interfaces[selectionIndex];
-        string IPBase = string.Join(".", interfaceData.IP.Split('.').Take(3));
+        AnsiConsole.MarkupLine("[bold green]Scanning for active IP addresses...[/]");
 
-        List<string> liveIpAddresses = [];
+        var selectedInterface = NetworkTools.Interfaces[_selectedInterfaceIndex];
+        string ipAddressBase = string.Join(".", selectedInterface.IP.Split('.').Take(3));
 
-
+        var activeIpAddresses = new List<string>();
         var table = new Table().LeftAligned().Width(40);
 
         AnsiConsole.Live(table)
             .Start(ctx =>
             {
-                table.AddColumn("Active IP addresses");
-                for (int i = 0; i < 257; i++)
+                table.AddColumn("Active IP Addresses");
+                // Scan the common host range for a /24 subnet (1-254).
+                for (int i = 1; i < 255; i++)
                 {
-                    string currentIP = $"{IPBase}.{i}";
-                    if (NetworkTools.IsIpAddressLive(currentIP))
+                    string currentIp = $"{ipAddressBase}.{i}";
+                    if (NetworkTools.IsIpAddressLive(currentIp))
                     {
-                        table.AddRow(currentIP);
-                        liveIpAddresses.Add(currentIP);
+                        table.AddRow(currentIp);
+                        activeIpAddresses.Add(currentIp);
                         ctx.Refresh();
                     }
-
                 }
-
-
             });
 
-        liveIpAddresses.Add("Back");
+        var promptChoices = new List<string>(activeIpAddresses);
+        promptChoices.Add(BackChoice);
+
         Console.Clear();
         var selection = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
-            .Title("Found active IP addresses:")
-            .PageSize(50)
-            .AddChoices(liveIpAddresses));
+                .Title("Found active IP addresses:")
+                .PageSize(40)
+                .AddChoices(promptChoices));
 
-
-        if (selection == "Back")
+        if (selection == BackChoice)
         {
-            menuStack.Pop();
-            menuStack.Peek().Invoke(); // Go back to the previous menu
+            _menuStack.Pop(); // Pop ScanForActiveIps
+            _menuStack.Peek().Invoke(); // Go back to the previous menu (SelectNetworkInterface)
         }
-
-        selectedIpForPortscan = selection;
-
-        menuStack.Push(ScanPortsForIp);
-        menuStack.Peek().Invoke(); 
-
-        Console.Clear();
-
+        else
+        {
+            _selectedIpForPortScan = selection;
+            _menuStack.Push(ScanPortsOnSelectedIp);
+            _menuStack.Peek().Invoke();
+        }
     }
 
-    static void ScanPortsForIp()
+    /// <summary>
+    /// Scans ports 0-65535 on the selected IP address.
+    /// </summary>
+    private static void ScanPortsOnSelectedIp()
     {
-        var cts = new CancellationTokenSource();
+        using var cancellationTokenSource = new CancellationTokenSource();
 
-        // Start a new Task to listen for a key press  
-        // This task will run in the background without blocking the main UI thread  
+        // Start a background task to listen for a key press to cancel the scan.
         Task.Run(() =>
         {
-            Console.ReadKey(true); // Read a key, 'true' means don't display it  
-            cts.Cancel(); // Signal cancellation once a key is pressed  
-        });
+            Console.ReadKey(true); // Blocks until a key is pressed.
+            cancellationTokenSource.Cancel(); // Signal cancellation.
+        }, cancellationTokenSource.Token);
 
-        const int MAX_PORT_NUMBER = 65535;
+        const int MaxPortNumber = 65535;
         Console.Clear();
-        AnsiConsole.MarkupLine($"[bold green]Scanning active ports for IP {selectedIpForPortscan}[/]");
-        AnsiConsole.MarkupLine($"Press a button to stop the scan...");
+        AnsiConsole.MarkupLine($"[bold green]Scanning active ports for IP [underline]{_selectedIpForPortScan}[/][/]");
+        AnsiConsole.MarkupLine("[yellow]Press any key to stop the scan...[/]\n");
 
-
-        List<string> openPorts = [];
-
-
+        var openPorts = new List<string>();
         var table = new Table().LeftAligned().Width(40);
+        int lastScannedPort = 0;
 
-        int i = 0;
         AnsiConsole.Live(table)
             .Start(ctx =>
             {
-                table.AddColumn("Active ports:");
-                for (i=0; i < MAX_PORT_NUMBER; i++)
+                table.AddColumn("Active Ports");
+                for (int port = 0; port <= MaxPortNumber; port++)
                 {
-
-                    if (cts.Token.IsCancellationRequested)
+                    lastScannedPort = port;
+                    if (cancellationTokenSource.Token.IsCancellationRequested)
                     {
-                        AnsiConsole.MarkupLine("\n[yellow]Scanning stopped by user.[/]");
-                        break; // Exit the loop
+                        break; // Exit the loop if user pressed a key.
                     }
 
-                    table.Title($"Scanning {i}/{MAX_PORT_NUMBER}");
-                    if (NetworkTools.IsPortOpen(selectedIpForPortscan, i, 20))
+                    // Correctly calculate percentage using floating-point division.
+                    double percentage = (double)port / MaxPortNumber * 100;
+                    table.Title($"Scanning {port}/{MaxPortNumber} ({percentage:F2}%)");
+
+                    if (NetworkTools.IsPortOpen(_selectedIpForPortScan, port, 20))
                     {
-                        table.AddRow(i.ToString());
-                        openPorts.Add(i.ToString());
+                        table.AddRow(port.ToString());
+                        openPorts.Add(port.ToString());
                     }
-                    ctx.Refresh();
+
+                    // Refresh the live display periodically to reduce flicker and improve performance.
+                    if (port % 10 == 0)
+                    {
+                        ctx.Refresh();
+                    }
                 }
             });
 
+        if (cancellationTokenSource.IsCancellationRequested)
+        {
+            AnsiConsole.MarkupLine("\n[yellow]Scanning stopped by user.[/]");
+        }
+
         Console.Clear();
-        if(openPorts.Count != 0)
+        if (openPorts.Any())
         {
             var selection = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
-                .Title($"Found open ports in the range 0-{i}:")
-                .PageSize(50)
-                .AddChoices(openPorts));
+                    .Title($"Found [green]{openPorts.Count}[/] open port(s) in the range 0-{lastScannedPort}:")
+                    .PageSize(20)
+                    .AddChoices(openPorts));
+            // The selection is currently not used, but kept for behavior consistency.
+        }
+        else
+        {
+            AnsiConsole.MarkupLine($"[yellow]No open ports found for {_selectedIpForPortScan} in the scanned range 0-{lastScannedPort}.[/]");
+            Console.WriteLine("\nPress any key to continue...");
+            Console.ReadKey();
         }
 
-
         Console.Clear();
-        menuStack.Pop(); // Remove current menu from stack
-        menuStack.Pop(); // Remove current menu from stack
-        menuStack.Peek().Invoke();
-
+        // Navigate back two levels: from Port Scan -> IP List -> Interface List menu.
+        _menuStack.Pop(); // Pop ScanPortsOnSelectedIp
+        _menuStack.Pop(); // Pop ScanForActiveIps
+        _menuStack.Peek().Invoke();
     }
+
+    #endregion
 }
